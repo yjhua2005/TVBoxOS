@@ -1,0 +1,119 @@
+把下面的批处理修改为你自己的目录，把我的项目这些文件拷贝出来TVBoxOS.zip，供AI agent参考。再把你对应的文件拷贝一份供agent修改
+agent很快就可以给你复刻出来。提示词参考TVBoxOS.zip设置界面最上面两行，为我的项目增加多仓storeHouse功能，前端也要修改 script.js增加以下项目 
+function pushStore() {
+    doAction('pushStore', {
+        pushStore_name: $('#diy_store_name').val(),
+        pushStore_url: $('#diy_store_url').val()
+    });
+}
+
+function livePush() {
+    doAction('livePush', {
+        live_name: $('#live_name').val(),
+        live_address: $('#live_address').val()
+    });
+}
+并把功能前后实现完整。
+
+请把下边的另存为.cmd 方便你拷贝文件 两个目录可交换
+
+@echo on
+chcp 936
+cls
+echo ==============================================
+echo    批量复制 —— 完整保留原始目录结构
+echo ==============================================
+
+:: 源目录根路径
+set "SOURCE_ROOT=D:\LocalA_Win20\修改文件_TVBoxOS\4_加入多仓\"
+
+:: 目标目录（自动读取为当前所在文件夹）
+set "TARGET=D:\TVBoxOS\"
+
+:: 开始复制
+echo 保持目录结构
+
+
+
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\fragment\ModelSettingFragment.java"   "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\fragment\" /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\api\ApiConfig.java"                      "%TARGET%app\src\main\java\com\github\tvbox\osc\api\"         /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\bean\SourceBean.java"                    "%TARGET%app\src\main\java\com\github\tvbox\osc\bean\"        /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\bean\IJKCode.java"                       "%TARGET%app\src\main\java\com\github\tvbox\osc\bean\"        /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\base\BaseActivity.java"                  "%TARGET%app\src\main\java\com\github\tvbox\osc\base\"        /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\base\BaseLazyFragment.java"              "%TARGET%app\src\main\java\com\github\tvbox\osc\base\"        /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\dialog\SelectDialog.java"             "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\dialog\"   /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\dialog\ApiDialog.java"                "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\dialog\"   /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\dialog\ApiHistoryDialog.java"         "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\dialog\"   /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\dialog\LiveSourceDialog.java"                "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\dialog\"   /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\dialog\MoreSourceDialog.java"                "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\dialog\"   /y /i /e
+
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\activity\HomeActivity.java"           "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\activity\" /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\activity\SettingActivity.java"        "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\activity\" /y /i /e
+
+
+
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\adapter\SelectDialogAdapter.java"     "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\adapter\"  /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\adapter\ApiHistoryDialogAdapter.java" "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\adapter\"  /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\adapter\LineSelectAdapter.java" "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\adapter\"  /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\adapter\LiveSourceSelectAdapter.java" "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\adapter\"  /y /i /e
+
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\util\HistoryHelper.java"                 "%TARGET%app\src\main\java\com\github\tvbox\osc\util\"        /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\event\RefreshEvent.java"                 "%TARGET%app\src\main\java\com\github\tvbox\osc\event\"       /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\util\HawkConfig.java"                    "%TARGET%app\src\main\java\com\github\tvbox\osc\util\"        /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\ui\dialog\BaseDialog.java"               "%TARGET%app\src\main\java\com\github\tvbox\osc\ui\dialog\"   /y /i /e
+
+copy "%SOURCE_ROOT%app\build.gradle"                                                               "%TARGET%app\"                                                /y
+xcopy "%SOURCE_ROOT%app\src\main\AndroidManifest.xml"                                               "%TARGET%app\src\main\"                                       /y /i /e
+copy "%SOURCE_ROOT%gradle.properties"                                                              "%TARGET%"                                                    /y
+xcopy "%SOURCE_ROOT%app\src\main\res\values\colors.xml"                                             "%TARGET%app\src\main\res\values\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\values\dimens.xml"                                             "%TARGET%app\src\main\res\values\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\values\strings.xml"                                            "%TARGET%app\src\main\res\values\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\values\styles.xml"                                             "%TARGET%app\src\main\res\values\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\values\attrs.xml"                                              "%TARGET%app\src\main\res\values\"                            /y /i /e
+
+
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\server\ControlManager.java"              "%TARGET%app\src\main\java\com\github\tvbox\osc\server\"      /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\server\RemoteServer.java"                "%TARGET%app\src\main\java\com\github\tvbox\osc\server\"      /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\server\InputRequestProcess.java"         "%TARGET%app\src\main\java\com\github\tvbox\osc\server\"      /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\server\DataReceiver.java"                "%TARGET%app\src\main\java\com\github\tvbox\osc\server\"      /y /i /e
+
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\bean\MoreSourceBean.java"  "%TARGET%app\src\main\java\com\github\tvbox\osc\bean\"                       /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\bean\LiveSourceBean.java"  "%TARGET%app\src\main\java\com\github\tvbox\osc\bean\"                       /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\java\com\github\tvbox\osc\bean\BaseItem.java"  "%TARGET%app\src\main\java\com\github\tvbox\osc\bean\"                       /y /i /e
+
+xcopy "%SOURCE_ROOT%app\src\main\res\raw\index.html"                                                "%TARGET%app\src\main\res\raw\"                               /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\raw\jquery.js"                                                 "%TARGET%app\src\main\res\raw\"                               /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\raw\script.js"                                                 "%TARGET%app\src\main\res\raw\"                               /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\raw\style.css"                                                 "%TARGET%app\src\main\res\raw\"                               /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\raw\ui.css"                                                    "%TARGET%app\src\main\res\raw\"                               /y /i /e
+
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\shape_setting_model_focus.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\anim_loading.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\button_dialog_main.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\icon_loading.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\shape_dialog_bg_main.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\shape_setting_model_focus.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\shape_user_focus.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\icon_delete.xml"                          "%TARGET%app\src\main\res\drawable\"                           /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\shape_danmu_setting_bg.xml"                           "%TARGET%app\src\main\res\drawable\"                          /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\button_danmu_setting.xml"                             "%TARGET%app\src\main\res\drawable\"                          /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\input_dialog_api_input.xml"                           "%TARGET%app\src\main\res\drawable\"                          /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\drawable\ic_select_fill.xml"                           "%TARGET%app\src\main\res\drawable\"                          /y /i /e
+
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\dialog_select.xml"                                      "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\item_dialog_select.xml"                                 "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\dialog_api.xml"                                         "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\fragment_model.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\item_line_select.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\item_live_source_select.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\live_source_dialog_select.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\more_source_dialog_select.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\item_source_select.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\layout\dialog_tip.xml"                                     "%TARGET%app\src\main\res\layout\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\xml\file_paths.xml"                                     "%TARGET%app\src\main\res\xml\"                            /y /i /e
+xcopy "%SOURCE_ROOT%app\src\main\res\xml\network_security_config.xml"                                     "%TARGET%app\src\main\res\xml\"                            /y /i /e
+
+echo ? 复制完成！【完整保留原始目录结构】
+echo 目标路径：%TARGET%
+echo.
+pause
