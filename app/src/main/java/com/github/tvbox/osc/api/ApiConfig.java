@@ -167,7 +167,8 @@ public class ApiConfig {
     }
 
     private String TempKey = null;
-    private String configUrl(String apiUrl){
+    public String getTempKey() { return TempKey; }
+    public String configUrl(String apiUrl){
         TempKey = null;
         String configUrl = "", pk = ";pk;";
         apiUrl=apiUrl.replace("file://", "clan://localhost/");
@@ -1770,7 +1771,7 @@ public class ApiConfig {
         return ijkCodes.get(0);
     }
 
-    String clanToAddress(String lanLink) {
+    public String clanToAddress(String lanLink) {
         if (lanLink.startsWith("clan://localhost/")) {
             return lanLink.replace("clan://localhost/", ControlManager.get().getAddress(true) + "file/");
         } else {
@@ -1780,12 +1781,12 @@ public class ApiConfig {
         }
     }
 
-    String clanContentFix(String lanLink, String content) {
+    public String clanContentFix(String lanLink, String content) {
         String fix = lanLink.substring(0, lanLink.indexOf("/file/") + 6);
         return content.replace("clan://localhost/", fix).replace("file://", fix);
     }
 
-    String fixContentPath(String url, String content) {
+    public String fixContentPath(String url, String content) {
         if (content.contains("\"./") || content.contains("\"../")) {
             url=url.replace("file://","clan://localhost/");
             if(!url.startsWith("http") && !url.startsWith("clan://")){

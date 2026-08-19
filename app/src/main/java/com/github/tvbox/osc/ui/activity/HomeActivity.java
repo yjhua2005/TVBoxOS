@@ -57,6 +57,7 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.HistoryHelper;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
@@ -111,7 +112,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         public void run() {
             Date date = new Date();
-            SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd  E  HH:mm", Locale.CHINA);
+            SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd  E  HH:mm:ss", Locale.CHINA);
             tvDate.setText(timeFormat.format(date));
             mHandler.postDelayed(this, 1000);
         }
@@ -725,6 +726,15 @@ public class HomeActivity extends BaseActivity {
             }
         } else if (event.type == RefreshEvent.TYPE_HOME_SOURCE_CHANGE) {
             refreshHome(false);
+        } else if (event.type == RefreshEvent.TYPE_PUSH_STORE) {
+            String storeUrl = (String) event.obj;
+            Hawk.put(HawkConfig.STORE_API, storeUrl);
+            Toast.makeText(this, "多仓地址已推送", Toast.LENGTH_SHORT).show();
+        } else if (event.type == RefreshEvent.TYPE_LIVE_PUSH) {
+            String liveAddress = (String) event.obj;
+            Hawk.put(HawkConfig.LIVE_API_URL, liveAddress);
+            HistoryHelper.setLiveApiHistory(liveAddress);
+            Toast.makeText(this, "直播源已推送", Toast.LENGTH_SHORT).show();
         }
     }
 

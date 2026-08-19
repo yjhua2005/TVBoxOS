@@ -58,11 +58,21 @@ import com.hjq.permissions.XXPermissions;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
+import com.github.tvbox.osc.bean.LiveSourceBean;
+import com.github.tvbox.osc.bean.MoreSourceBean;
+import com.github.tvbox.osc.ui.adapter.LineSelectAdapter;
+import com.github.tvbox.osc.ui.dialog.LiveSourceDialog;
+import com.github.tvbox.osc.ui.dialog.MoreSourceDialog;
+import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import okhttp3.HttpUrl;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -102,6 +112,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private boolean selectLocalLive;
     private TextView tvDanmuOpenText;
     private TextView tvDanmuApiText;
+    private TextView tvStoreApi;
+    private TextView tvLiveApiText;
+    // ========== 线路缓存相关 ==========
+    private long currentLineCacheTime = -1;
+    private String currentLineCacheKey = "";
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -155,6 +170,51 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         tvApi.setText(Hawk.get(HawkConfig.API_URL, ""));
         refreshApiLineText();
+        // 配置多仓地址右侧：显示当前选中的仓库名
+        tvStoreApi = findViewById(R.id.tvStoreApi);
+        refreshStoreApiText();
+        // 直播地址右侧：显示当前直播源名称
+        tvLiveApiText = findViewById(R.id.text_immersive_switch);
+        refreshLiveApiText();
+        // 线路切换右侧：显示当前选中的线路名
+        final TextView tvMoreSourceApi = findViewById(R.id.tvMoreSourceApi);
+        if (tvMoreSourceApi != null) {
+            ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+            String current = Hawk.get(HawkConfig.API_URL, "");
+            String lineName = "";
+            for (String apiLine : apiLines) {
+                if (current.equals(HistoryHelper.getApiLineUrl(apiLine))) {
+                    lineName = HistoryHelper.getApiLineName(apiLine);
+                    break;
+                }
+            }
+            tvMoreSourceApi.setText(lineName);
+        }
+        // 配置多仓地址 -> 多仓列表对话框
+        findViewById(R.id.default_more_store).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                showStoreHouseDialog();
+            }
+        });
+        // 线路切换 -> 从多仓URL动态获取线路
+        findViewById(R.id.more_source).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                showLineSwitchDialog();
+            }
+        });
+
+        // 直播地址（优先显示直播源分支选择列表）
+        findViewById(R.id.ll_immersive_switch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                showLiveSourceDialog();
+            }
+        });
 
         tvDns.setText(OkGoHelper.dnsHttpsList.get(Hawk.get(HawkConfig.DOH_URL, 0)));
         tvHomeRec.setText(getHomeRecName(Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC)));
@@ -168,6 +228,18 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvIjkCachePlay.setText(Hawk.get(HawkConfig.IJK_CACHE_PLAY, false) ? "开启" : "关闭");
         tvHomeDefaultShow = findViewById(R.id.tvHomeText);
         tvHomeDefaultShow.setText(Hawk.get(HawkConfig.DEFAULT_LOAD_LIVE, false) ? "直播" : "点播");
+        TextView homePageText = findViewById(R.id.home_page_text);
+        homePageText.setText(Hawk.get(HawkConfig.DEFAULT_LOAD_LIVE, false) ? "直播" : "点播");
+        // 首选项（直播/点播切换）
+        findViewById(R.id.home_page).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                Hawk.put(HawkConfig.DEFAULT_LOAD_LIVE, !Hawk.get(HawkConfig.DEFAULT_LOAD_LIVE, false));
+                tvHomeDefaultShow.setText(Hawk.get(HawkConfig.DEFAULT_LOAD_LIVE, false) ? "直播" : "点播");
+                homePageText.setText(Hawk.get(HawkConfig.DEFAULT_LOAD_LIVE, false) ? "直播" : "点播");
+            }
+        });
         findViewById(R.id.llDebug).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1107,5 +1179,1179 @@ public class ModelSettingFragment extends BaseLazyFragment {
         } else {
             return "缩略图";
         }
+    }
+
+    // ===================== 多仓配置/线路切换相关方法 =====================
+
+    /**
+     * 显示多仓配置对话框（参照ysc的h21）
+     * 展示已配置的仓库列表，支持新增、删除、选择仓库
+     * 选中仓库后自动弹出线路切换对话框（参照ysc a21: dismiss后调用y11.OooO0O0）
+     */
+    private void showStoreHouseDialog() {
+        MoreSourceDialog dialog = new MoreSourceDialog(mActivity);
+        // EventBus注册由dialog.show()内部自行处理，此处不再重复注册
+        // 参照ysc a21: 选中仓库后dismiss，然后直接弹出线路切换
+        dialog.setOnStoreSelectedListener(new MoreSourceDialog.OnStoreSelectedListener() {
+            @Override
+            public void onStoreSelected(MoreSourceBean bean) {
+                showLineSwitchDialog();
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                ((BaseActivity) mActivity).hideSysBar();
+                // EventBus反注册由dialog.dismiss()内部自行处理，此处不再重复
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * 线路切换对话框（参照ysc的y11）
+     * 1. 如果有多仓配置，先展示多仓选择列表
+     * 2. 选中仓库后，从仓库URL动态获取线路列表
+     * 3. 展示线路选择对话框
+     */
+    private void showLineSwitchDialog() {
+        // 获取已配置的仓库列表
+        ArrayList<MoreSourceBean> storeList = getStoreHouseList();
+        ArrayList<MoreSourceBean> lineHistory = getApiHistoryList();
+
+        // 将仓库中本地保存的线路合并到历史列表（参照ysc y11.OooO0O0）
+        // 注意：只合并线路用于展示，不删除仓库（仓库保留在列表中供用户切换）
+        if (!storeList.isEmpty()) {
+            for (MoreSourceBean store : storeList) {
+                if (store.getLocalLineUrls() != null) {
+                    lineHistory.addAll(store.getLocalLineUrls());
+                }
+            }
+        }
+
+        // 如果历史线路列表为空且没有仓库配置（参照ysc y11.OooO0O0: 弹出多仓配置对话框而非Toast）
+        if (lineHistory.isEmpty() && storeList.isEmpty()) {
+            // 尝试从已保存的 API_LINE_LIST 加载（兼容旧数据，转为MoreSourceBean）
+            ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+            if (!apiLines.isEmpty()) {
+                ArrayList<MoreSourceBean> lineBeans = new ArrayList<>();
+                for (String line : apiLines) {
+                    MoreSourceBean bean = new MoreSourceBean();
+                    bean.setSourceName(HistoryHelper.getApiLineName(line));
+                    bean.setSourceUrl(HistoryHelper.getApiLineUrl(line));
+                    bean.setShowDelete(true); // 旧数据都是历史线路，可删除
+                    lineBeans.add(bean);
+                }
+                showLineSelectDialog(lineBeans);
+                return;
+            }
+            // 获取当前选中的仓库
+            MoreSourceBean selectedStore = getSelectedStoreHouse();
+            if (selectedStore == null || selectedStore.getSourceUrl() == null || selectedStore.getSourceUrl().isEmpty()) {
+                // 线路为空且没有选中仓库 → 直接弹出多仓配置对话框（参照ysc: new h21(activity).show()）
+                showStoreHouseDialog();
+                return;
+            }
+            // 有选中仓库，继续往下走获取线路
+        }
+
+        // 获取当前选中的仓库
+        MoreSourceBean selectedStore = getSelectedStoreHouse();
+
+        // 如果有选中的仓库，直接从该仓库获取线路
+        if (selectedStore != null && selectedStore.getSourceUrl() != null && !selectedStore.getSourceUrl().isEmpty()) {
+            fetchStoreLinesAndShow(selectedStore);
+            return;
+        }
+
+        // 如果有历史线路但没有选中仓库，直接展示历史线路（都是用户手动添加的，showDelete=true）
+        if (!lineHistory.isEmpty()) {
+            // 确保所有历史线路都有showDelete=true
+            for (MoreSourceBean bean : lineHistory) {
+                bean.setShowDelete(true);
+            }
+            showLineSelectDialog(lineHistory);
+            return;
+        }
+
+        // 如果有仓库列表，显示仓库选择对话框
+        if (!storeList.isEmpty()) {
+            showStoreSelectDialog(storeList);
+            return;
+        }
+
+        // 兜底：尝试从 STORE_API 获取
+        String storeApi = Hawk.get(HawkConfig.STORE_API, "");
+        if (!storeApi.isEmpty()) {
+            MoreSourceBean storeBean = new MoreSourceBean();
+            storeBean.setSourceName(Hawk.get(HawkConfig.STORE_API_NAME, ""));
+            storeBean.setSourceUrl(storeApi);
+            fetchStoreLinesAndShow(storeBean);
+        } else {
+            // 兜底也弹多仓配置对话框（参照ysc: new h21(activity).show()）
+            showStoreHouseDialog();
+        }
+    }
+
+    /**
+     * 显示仓库选择对话框（参照ysc中从h21选择仓库后进入y11）
+     */
+    private void showStoreSelectDialog(ArrayList<MoreSourceBean> storeList) {
+        String selectedUrl = Hawk.get(HawkConfig.STORE_API, "");
+        int idx = 0;
+        for (int i = 0; i < storeList.size(); i++) {
+            if (selectedUrl.equals(storeList.get(i).getSourceUrl())) {
+                idx = i;
+                break;
+            }
+        }
+        SelectDialog<MoreSourceBean> dialog = new SelectDialog<>(mActivity);
+        dialog.setTip("选择仓库");
+        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<MoreSourceBean>() {
+            @Override
+            public void click(MoreSourceBean value, int pos) {
+                dialog.dismiss();
+                // 保存选中的仓库
+                saveSelectedStoreHouse(value);
+                Hawk.put(HawkConfig.STORE_API, value.getSourceUrl());
+                if (value.getSourceName() != null && !value.getSourceName().isEmpty()) {
+                    Hawk.put(HawkConfig.STORE_API_NAME, value.getSourceName());
+                }
+                // 从选中的仓库获取线路
+                Toast.makeText(mContext, "正在获取线路，请稍候...", Toast.LENGTH_SHORT).show();
+                fetchStoreLinesAndShow(value);
+            }
+
+            @Override
+            public String getDisplay(MoreSourceBean val) {
+                String name = val.getSourceName();
+                if (name == null || name.isEmpty()) {
+                    name = val.getSourceUrl();
+                }
+                return name;
+            }
+        }, new DiffUtil.ItemCallback<MoreSourceBean>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull @NotNull MoreSourceBean oldItem, @NonNull @NotNull MoreSourceBean newItem) {
+                return oldItem.getUniKey().equals(newItem.getUniKey());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull @NotNull MoreSourceBean oldItem, @NonNull @NotNull MoreSourceBean newItem) {
+                return oldItem.getUniKey().equals(newItem.getUniKey());
+            }
+        }, storeList, idx);
+        dialog.show();
+    }
+
+    /**
+     * 从仓库URL获取线路并显示线路选择对话框
+     * 参照ysc y11.OooO0O0: 支持缓存机制 CACHE_TIME/cacheMode/cacheKey
+     */
+    private void fetchStoreLinesAndShow(MoreSourceBean storeBean) {
+        String storeUrl = storeBean.getSourceUrl();
+        if (storeUrl == null || storeUrl.isEmpty()) {
+            Toast.makeText(mContext, "仓库地址为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 复用 ApiConfig.configUrl() 统一处理URL（file://转换、;pk;提取、clan://转换、http补全）
+        // 与 MoreSourceDialog.addStoreToLayout 保持一致的URL预处理
+        ApiConfig apiConfig = ApiConfig.get();
+        final String rawUrl = storeUrl;
+        String fetchUrl = apiConfig.configUrl(storeUrl);
+        final String configKey = apiConfig.getTempKey();
+
+        // ========== 新增: 线路缓存机制（参照ysc y11.OooO0O0 + h21.OooO00o） ==========
+        // 缓存Key格式（参照ysc: "LINE_KEY" + url）
+        String cacheKey = "LINE_KEY" + fetchUrl;
+        currentLineCacheKey = cacheKey;
+
+        // 读取CACHE_TIME配置（参照ysc: iu.OooOOOo("CACHE_TIME", 1)）
+        int cacheDays = Hawk.get(HawkConfig.CACHE_TIME, 1);
+        // 缓存时间转换为毫秒（参照ysc: cacheTime = N * 24 * 60 * 60 * 1000）
+        // -1 = 永久缓存，0 = 不缓存
+        if (cacheDays == -1) {
+            currentLineCacheTime = -1L;
+        } else {
+            currentLineCacheTime = (long) cacheDays * 24 * 60 * 60 * 1000;
+        }
+
+        // ========== 新增: -1 URL特殊处理（参照ysc y11: URL含"-1"时走u11回调） ==========
+        if (fetchUrl.contains("-1")) {
+            handleMinusOneUrl(storeBean, fetchUrl, configKey, rawUrl);
+            return;
+        }
+
+        // ========== 新增: 检查本地缓存（参照ysc: FIRST_CACHE_THEN_REQUEST模式） ==========
+        // 本地地址(127.0.0.1)不使用缓存（参照ysc: !b51.OooooOO(strClanToAddress, "http://127.0.0.1"））
+        boolean useCache = !fetchUrl.startsWith("http://127.0.0.1") && cacheDays != 0;
+
+        if (useCache) {
+            String cachedBody = readLineCache(cacheKey);
+            if (cachedBody != null && !cachedBody.isEmpty()) {
+                boolean cacheValid = isLineCacheValid(cacheKey, currentLineCacheTime);
+                if (cacheValid) {
+                    // 缓存有效，解密后再使用（缓存存的是原始响应）
+                    String decryptedCache = ApiConfig.FindResult(cachedBody, configKey);
+                    if (rawUrl != null && rawUrl.startsWith("clan")) {
+                        decryptedCache = ApiConfig.get().clanContentFix(fetchUrl, decryptedCache);
+                    }
+                    decryptedCache = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, decryptedCache);
+                    parseAndShowLinesFromJson(decryptedCache, fetchUrl, storeBean, configKey, rawUrl);
+                    fetchLineFromNetwork(fetchUrl, storeBean, cacheKey, currentLineCacheTime, true, configKey, rawUrl);
+                    return;
+                }
+            }
+        }
+
+        // 无缓存或缓存无效，直接请求网络
+        fetchLineFromNetwork(fetchUrl, storeBean, cacheKey, currentLineCacheTime, false, configKey, rawUrl);
+    }
+
+    /**
+     * 从网络获取线路（参照ysc y11.OooO0O0 + h21.OooO00o的st请求）
+     * @param isBackgroundUpdate 是否为后台静默更新（缓存有效时后台刷新）
+     */
+    private void fetchLineFromNetwork(final String fetchUrl, final MoreSourceBean storeBean,
+                                        final String cacheKey, final long cacheTimeMs,
+                                        final boolean isBackgroundUpdate,
+                                        final String configKey, final String rawUrl) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
+                            .followRedirects(true).followSslRedirects(true).build();
+                    okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder().url(fetchUrl);
+                    // gitcode特殊处理（参照ysc: headers("User-Agent", m0.OooOoo0()).headers("Accept", ...)）
+                    if (fetchUrl.startsWith("https://gitcode")) {
+                        requestBuilder.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+                        requestBuilder.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                    } else {
+                        requestBuilder.header("User-Agent", "Mozilla/5.0");
+                    }
+                    okhttp3.Response response = client.newCall(requestBuilder.build()).execute();
+                    if (response.body() != null) {
+                        String body = response.body().string();
+                        response.close();
+                        // 写入缓存（缓存原始响应，解密后缓存无意义）
+                        if (cacheTimeMs != 0 && !fetchUrl.startsWith("http://127.0.0.1")) {
+                            writeLineCache(cacheKey, body, cacheTimeMs);
+                        }
+                        // 复用 ApiConfig.FindResult 解密 + 后处理（与 MoreSourceDialog.addStoreToLayout 完全一致）
+                        ApiConfig apiConfig = ApiConfig.get();
+                        body = ApiConfig.FindResult(body, configKey);
+                        if (rawUrl != null && rawUrl.startsWith("clan")) {
+                            body = apiConfig.clanContentFix(fetchUrl, body);
+                        }
+                        body = apiConfig.fixContentPath(rawUrl != null ? rawUrl : fetchUrl, body);
+                        if (isBackgroundUpdate) {
+                            // 后台静默更新：只更新localLineUrls，不弹对话框
+                            try {
+                                org.json.JSONObject jsonObject = new org.json.JSONObject(body);
+                                if (jsonObject.has("urls")) {
+                                    org.json.JSONArray urls = jsonObject.getJSONArray("urls");
+                                    ArrayList<MoreSourceBean> lines = new ArrayList<>();
+                                    for (int i = 0; i < urls.length(); i++) {
+                                        org.json.JSONObject item = urls.getJSONObject(i);
+                                        MoreSourceBean lb = new MoreSourceBean();
+                                        lb.setSourceUrl(item.optString("url", ""));
+                                        lb.setSourceName(item.optString("name", ""));
+                                        lines.add(lb);
+                                    }
+                                    storeBean.setLocalLineUrls(lines);
+                                    saveStoreHouseList(getStoreHouseList());
+                                }
+                            } catch (Exception ignored) {}
+                        } else {
+                            parseAndShowLinesFromJson(body, fetchUrl, storeBean, configKey, rawUrl);
+                        }
+                    } else {
+                        response.close();
+                        if (!isBackgroundUpdate) {
+                            String cachedBody = readLineCache(cacheKey);
+                            if (cachedBody != null && !cachedBody.isEmpty()) {
+                                mActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(mContext, "网络失败，使用缓存数据", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                // 缓存数据也需要解密
+                                String decrypted = ApiConfig.FindResult(cachedBody, configKey);
+                                if (rawUrl != null && rawUrl.startsWith("clan")) {
+                                    decrypted = ApiConfig.get().clanContentFix(fetchUrl, decrypted);
+                                }
+                                decrypted = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, decrypted);
+                                parseAndShowLinesFromJson(decrypted, fetchUrl, storeBean, configKey, rawUrl);
+                            } else {
+                                showLineFetchError(null);
+                            }
+                        }
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    if (!isBackgroundUpdate) {
+                        String cachedBody = readLineCache(cacheKey);
+                        if (cachedBody != null && !cachedBody.isEmpty()) {
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(mContext, "网络异常，使用缓存数据", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            String decrypted = ApiConfig.FindResult(cachedBody, configKey);
+                            if (rawUrl != null && rawUrl.startsWith("clan")) {
+                                decrypted = ApiConfig.get().clanContentFix(fetchUrl, decrypted);
+                            }
+                            decrypted = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, decrypted);
+                            parseAndShowLinesFromJson(decrypted, fetchUrl, storeBean, configKey, rawUrl);
+                        } else {
+                            showLineFetchError(e);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 解析JSON并显示线路选择（从fetchStoreLinesAndShow提取的公共方法）
+     */
+    private void parseAndShowLinesFromJson(String body, String fetchUrl, MoreSourceBean storeBean, String configKey, String rawUrl) {
+        ArrayList<String> apiLines = parseStoreLines(body);
+        // 检测是否为storeHouse格式（递归标记）
+        if (apiLines.size() == 1) {
+            String lineName = HistoryHelper.getApiLineName(apiLines.get(0));
+            String lineUrl = HistoryHelper.getApiLineUrl(apiLines.get(0));
+            if ((lineName == null || lineName.isEmpty()) && lineUrl != null && !lineUrl.isEmpty()) {
+                final String redirectUrl = lineUrl;
+                if (mActivity != null && !mActivity.isFinishing()) {
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MoreSourceBean firstStore = new MoreSourceBean();
+                            firstStore.setSourceUrl(redirectUrl);
+                            fetchStoreLinesAndShow(firstStore);
+                        }
+                    });
+                }
+                return;
+            }
+        }
+        // urls格式：合并线路（参照ysc y11.OooO0Oo）
+        ArrayList<MoreSourceBean> historyList = getApiHistoryList();
+        ArrayList<MoreSourceBean> allLines = new ArrayList<>();
+        try {
+            org.json.JSONObject jsonObject = new org.json.JSONObject(body);
+            if (jsonObject.has("urls")) {
+                org.json.JSONArray urls = jsonObject.getJSONArray("urls");
+                for (int i = 0; i < urls.length(); i++) {
+                    org.json.JSONObject item = urls.getJSONObject(i);
+                    MoreSourceBean lineBean = new MoreSourceBean();
+                    lineBean.setSourceUrl(item.optString("url", ""));
+                    lineBean.setSourceName(item.optString("name", ""));
+                    lineBean.setShowDelete(true);
+                    allLines.add(lineBean);
+                }
+            }
+        } catch (Exception ignored) {}
+        // 合并历史线路中不重复的（参照ysc y11第167-181行）
+        for (MoreSourceBean historyBean : historyList) {
+            boolean found = false;
+            for (MoreSourceBean lineBean : allLines) {
+                if (historyBean.getSourceUrl() != null && historyBean.getSourceUrl().equals(lineBean.getSourceUrl())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                if (historyBean.getSourceName() == null || historyBean.getSourceName().isEmpty()) {
+                    historyBean.setSourceName("自定义配置地址" + (allLines.size() + 1));
+                }
+                historyBean.setShowDelete(true);
+                allLines.add(historyBean);
+            }
+        }
+        // 保存localLineUrls到storeBean（参照ysc: moreSourceBean.setLocalLineUrls）
+        ArrayList<MoreSourceBean> lineUrlsOnly = new ArrayList<>();
+        for (MoreSourceBean line : allLines) {
+            if (line.getSourceUrl() != null && !line.getSourceUrl().isEmpty()) {
+                MoreSourceBean copy = new MoreSourceBean();
+                copy.setSourceUrl(line.getSourceUrl());
+                copy.setSourceName(line.getSourceName());
+                lineUrlsOnly.add(copy);
+            }
+        }
+        storeBean.setLocalLineUrls(lineUrlsOnly);
+        // 更新仓库列表中的localLineUrls
+        ArrayList<MoreSourceBean> storeList = getStoreHouseList();
+        for (int i = 0; i < storeList.size(); i++) {
+            if (storeList.get(i).getUniKey().equals(storeBean.getUniKey())) {
+                storeList.set(i, storeBean);
+                break;
+            }
+        }
+        saveStoreHouseList(storeList);
+        // 保存到API_LINE_LIST（兼容旧数据）
+        ArrayList<String> finalLines = new ArrayList<>();
+        for (MoreSourceBean bean : allLines) {
+            if (bean.getSourceUrl() != null && !bean.getSourceUrl().isEmpty()) {
+                finalLines.add(HistoryHelper.buildApiLine(bean.getSourceName(), bean.getSourceUrl()));
+            }
+        }
+        if (!finalLines.isEmpty()) {
+            Hawk.put(HawkConfig.API_LINE_LIST, finalLines);
+            Hawk.put(HawkConfig.API_LINE_SOURCE, fetchUrl);
+        }
+        // 在主线程显示对话框（使用带缓存信息的版本）
+        if (mActivity != null && !mActivity.isFinishing()) {
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (allLines.isEmpty()) {
+                        // urls和storeHouse都没检测到，判断是否为直接配置（sites格式等）
+                        // 如果body包含有效JSON且不是空对象，说明该URL本身就是一条线路
+                        try {
+                            org.json.JSONObject checkObj = new org.json.JSONObject(body);
+                            boolean isDirectConfig = checkObj.has("sites") || checkObj.has("spider")
+                                    || checkObj.has("lives") || checkObj.has("wallpaper");
+                            if (isDirectConfig) {
+                                // 该URL是直接配置线路，用其自身作为唯一线路
+                                MoreSourceBean directLine = new MoreSourceBean();
+                                directLine.setSourceUrl(rawUrl != null ? rawUrl : fetchUrl);
+                                directLine.setSourceName(storeBean.getSourceName() != null && !storeBean.getSourceName().isEmpty()
+                                        ? storeBean.getSourceName() : "直接配置");
+                                directLine.setShowDelete(true);
+                                allLines.add(directLine);
+                                storeBean.setLocalLineUrls(allLines);
+                                Hawk.put(HawkConfig.API_URL, directLine.getSourceUrl());
+                                Hawk.put(HawkConfig.API_LINE_SOURCE, fetchUrl);
+                                // 直接加载该配置并重启
+                                HistoryHelper.setApiHistory(directLine.getSourceUrl());
+                                if (tvApi != null) tvApi.setText(directLine.getSourceUrl());
+                                restartAppAfterConfigChanged();
+                                return;
+                            }
+                        } catch (Exception ignored) {}
+                        Toast.makeText(mContext, "未获取到线路，请检查仓库地址", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    showLineSelectDialogWithCacheInfo(allLines);
+                }
+            });
+        }
+    }
+
+    /**
+     * -1 URL特殊处理（参照ysc y11 + u11）
+     * ysc: URL含"-1"时，请求成功和失败都解析urls，区别在于标题显示
+     */
+    private void handleMinusOneUrl(final MoreSourceBean storeBean, final String fetchUrl, final String configKey, final String rawUrl) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
+                            .followRedirects(true).followSslRedirects(true).build();
+                    okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder().url(fetchUrl);
+                    if (fetchUrl.startsWith("https://gitcode")) {
+                        requestBuilder.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+                        requestBuilder.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                    } else {
+                        requestBuilder.header("User-Agent", "Mozilla/5.0");
+                    }
+                    okhttp3.Response response = client.newCall(requestBuilder.build()).execute();
+                    boolean success = response.isSuccessful();
+                    String body = null;
+                    if (response.body() != null) {
+                        body = response.body().string();
+                        response.close();
+                    }
+                    if (body != null && !body.isEmpty()) {
+                        // 复用 ApiConfig.FindResult 解密
+                        body = ApiConfig.FindResult(body, configKey);
+                        if (rawUrl != null && rawUrl.startsWith("clan")) {
+                            body = ApiConfig.get().clanContentFix(fetchUrl, body);
+                        }
+                        body = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, body);
+                        try {
+                            final String finalBody = body;
+                            org.json.JSONObject jsonObject = new org.json.JSONObject(finalBody);
+                            if (jsonObject.has("urls")) {
+                                final boolean finalSuccess = success;
+                                mActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!finalSuccess) {
+                                            currentLineCacheTime = 0;
+                                        }
+                                        showLineSelectDialogWithCacheInfo(parseUrlsFromJson(finalBody));
+                                    }
+                                });
+                                return;
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                    if (!mActivity.isFinishing()) {
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(mContext, "线路获取失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    String cachedBody = readLineCache(currentLineCacheKey);
+                    if (cachedBody != null && !cachedBody.isEmpty()) {
+                        String decrypted = ApiConfig.FindResult(cachedBody, configKey);
+                        final String finalDecrypted = decrypted;
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                currentLineCacheTime = 0;
+                                showLineSelectDialogWithCacheInfo(parseUrlsFromJson(finalDecrypted));
+                            }
+                        });
+                    } else {
+                        showLineFetchError(e);
+                    }
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 从JSON解析urls为MoreSourceBean列表（辅助方法）
+     */
+    private ArrayList<MoreSourceBean> parseUrlsFromJson(String body) {
+        ArrayList<MoreSourceBean> lines = new ArrayList<>();
+        try {
+            org.json.JSONObject jsonObject = new org.json.JSONObject(body);
+            if (jsonObject.has("urls")) {
+                org.json.JSONArray urls = jsonObject.getJSONArray("urls");
+                for (int i = 0; i < urls.length(); i++) {
+                    org.json.JSONObject item = urls.getJSONObject(i);
+                    MoreSourceBean lineBean = new MoreSourceBean();
+                    lineBean.setSourceUrl(item.optString("url", ""));
+                    lineBean.setSourceName(item.optString("name", ""));
+                    lineBean.setShowDelete(true);
+                    lines.add(lineBean);
+                }
+            }
+        } catch (Exception ignored) {}
+        return lines;
+    }
+
+    private void showLineFetchError(final Exception e) {
+        if (mActivity != null && !mActivity.isFinishing()) {
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, "线路获取失败" + (e != null ? e.getMessage() : ""), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    /**
+     * 解析仓库内容获取线路列表（参照ysc y11.OooO0Oo 和 ApiConfig.parseApiCollection）
+     * 支持两种格式：
+     * 1. {"urls": [{"url":"...","name":"..."}, ...]} 直接线路
+     * 2. {"storeHouse": [{"sourceName":"...","sourceUrl":"..."}, ...]} 多仓格式 → 保存仓库列表，并返回第一个仓库的URL供调用方继续获取线路
+     */
+    private ArrayList<String> parseStoreLines(String jsonStr) {
+        ArrayList<String> apiLines = new ArrayList<>();
+        try {
+            String json = jsonStr.trim();
+            int start = json.indexOf("{");
+            int end = json.lastIndexOf("}");
+            if (start >= 0 && end > start) {
+                json = json.substring(start, end + 1);
+            }
+            org.json.JSONObject jsonObject = new org.json.JSONObject(json);
+            // 格式1: 直接urls数组
+            if (jsonObject.has("urls") && jsonObject.get("urls") instanceof org.json.JSONArray) {
+                org.json.JSONArray urls = jsonObject.getJSONArray("urls");
+                for (int i = 0; i < urls.length(); i++) {
+                    String name = "";
+                    String url = "";
+                    Object element = urls.get(i);
+                    if (element instanceof org.json.JSONObject) {
+                        org.json.JSONObject item = (org.json.JSONObject) element;
+                        name = item.optString("name", "");
+                        url = item.optString("url", "");
+                        if (url.isEmpty()) {
+                            url = item.optString("api", "");
+                        }
+                    } else if (element instanceof String) {
+                        url = (String) element;
+                    }
+                    if (!url.isEmpty()) {
+                        apiLines.add(HistoryHelper.buildApiLine(name, url));
+                    }
+                }
+            }
+            // 格式2: storeHouse多仓格式（不覆盖CUSTOM_STORE_HOUSE，仓库列表由MoreSourceDialog统一管理）
+            if (jsonObject.has("storeHouse") && jsonObject.get("storeHouse") instanceof org.json.JSONArray) {
+                org.json.JSONArray storeHouse = jsonObject.getJSONArray("storeHouse");
+                ArrayList<MoreSourceBean> stores = new ArrayList<>();
+                java.util.LinkedHashMap<String, MoreSourceBean> linkedMap = new java.util.LinkedHashMap<>();
+                for (int i = 0; i < storeHouse.length(); i++) {
+                    org.json.JSONObject storeItem = storeHouse.getJSONObject(i);
+                    String storeName = storeItem.optString("sourceName", "");
+                    String storeUrl = storeItem.optString("sourceUrl", "");
+                    MoreSourceBean existBean = linkedMap.get(storeUrl);
+                    if (existBean == null) {
+                        MoreSourceBean storeBean = new MoreSourceBean();
+                        storeBean.setSourceName(storeName);
+                        storeBean.setSourceUrl(storeUrl);
+                        storeBean.setShowDelete(true);
+                        linkedMap.put(storeUrl, storeBean);
+                    } else {
+                        existBean.setSourceName(storeName);
+                    }
+                }
+                stores = new ArrayList<>(linkedMap.values());
+                // 不再调用saveStoreHouseList/updateMoreSourceApiText，避免覆盖MoreSourceDialog管理的仓库列表
+                // 如果urls也为空（纯storeHouse格式），返回特殊标记让调用方继续获取第一个仓库的线路
+                if (apiLines.isEmpty() && !stores.isEmpty()) {
+                    String firstStoreUrl = stores.get(0).getSourceUrl();
+                    if (firstStoreUrl != null && !firstStoreUrl.isEmpty()) {
+                        apiLines.add(HistoryHelper.buildApiLine("", firstStoreUrl));
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return apiLines;
+    }
+
+    /**
+     * 显示线路选择对话框（参照ysc y11.OooO0o0）
+     * 使用MoreSourceBean + LineSelectAdapter，支持删除按钮显隐
+     */
+    private void showLineSelectDialog(ArrayList<MoreSourceBean> lineBeans) {
+        String current = Hawk.get(HawkConfig.API_URL, "");
+        int idx = 0;
+        for (int i = 0; i < lineBeans.size(); i++) {
+            if (current.equals(lineBeans.get(i).getSourceUrl())) {
+                idx = i;
+                break;
+            }
+        }
+        final int selectIdx = idx;
+        SelectDialog<MoreSourceBean> dialog = new SelectDialog<>(mActivity);
+        dialog.setTip("选择线路");
+        final LineSelectAdapter[] adapterHolder = new LineSelectAdapter[1];
+        adapterHolder[0] = new LineSelectAdapter(new LineSelectAdapter.OnLineClickListener() {
+            @Override
+            public void onLineClick(MoreSourceBean bean, int position) {
+                String newApi = bean.getSourceUrl();
+                String oldApi = Hawk.get(HawkConfig.API_URL, "");
+                if (newApi == null || newApi.isEmpty()) return;
+                Hawk.put(HawkConfig.API_URL, newApi);
+                Hawk.put(HawkConfig.LIVE_API_URL, newApi);
+                HistoryHelper.setLiveApiHistory(newApi);
+                HistoryHelper.setApiHistory(newApi);
+                tvApi.setText(newApi);
+                refreshApiLineText();
+                dialog.dismiss();
+                if (!oldApi.equals(newApi)) {
+                    restartAppAfterConfigChanged();
+                }
+            }
+
+            @Override
+            public void onLineDelete(MoreSourceBean bean, int position) {
+                ArrayList<MoreSourceBean> historyList = getApiHistoryList();
+                for (int i = 0; i < historyList.size(); i++) {
+                    if (bean.getSourceUrl() != null && bean.getSourceUrl().equals(historyList.get(i).getSourceUrl())) {
+                        historyList.remove(i);
+                        break;
+                    }
+                }
+                saveApiHistoryList(historyList);
+                ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+                for (int i = 0; i < apiLines.size(); i++) {
+                    if (bean.getSourceUrl() != null && bean.getSourceUrl().equals(HistoryHelper.getApiLineUrl(apiLines.get(i)))) {
+                        apiLines.remove(i);
+                        break;
+                    }
+                }
+                Hawk.put(HawkConfig.API_LINE_LIST, apiLines);
+                adapterHolder[0].getData().remove(position);
+                adapterHolder[0].notifyItemRemoved(position);
+            }
+        });
+        LineSelectAdapter adapter = adapterHolder[0];
+        adapter.setData(lineBeans, selectIdx);
+        TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);
+        tvRecyclerView.setAdapter(adapter);
+        tvRecyclerView.setSelectedPosition(selectIdx);
+        if (selectIdx < 10) {
+            tvRecyclerView.setSelection(selectIdx);
+        }
+        tvRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (selectIdx >= 10) {
+                    tvRecyclerView.smoothScrollToPosition(selectIdx);
+                    tvRecyclerView.setSelectionWithSmooth(selectIdx);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * 显示带缓存信息的线路选择对话框（参照ysc y11.OooO00o标题显示缓存时间）
+     */
+    private void showLineSelectDialogWithCacheInfo(ArrayList<MoreSourceBean> lineBeans) {
+        String current = Hawk.get(HawkConfig.API_URL, "");
+        int idx = 0;
+        for (int i = 0; i < lineBeans.size(); i++) {
+            if (current.equals(lineBeans.get(i).getSourceUrl())) {
+                idx = i;
+                break;
+            }
+        }
+        final int selectIdx = idx;
+        SelectDialog<MoreSourceBean> dialog = new SelectDialog<>(mActivity);
+        // 标题显示缓存信息（参照ysc y11.OooO00o）
+        String cacheInfoTitle = buildCacheInfoTitle();
+        dialog.setTip(cacheInfoTitle);
+        final LineSelectAdapter[] adapterHolder = new LineSelectAdapter[1];
+        adapterHolder[0] = new LineSelectAdapter(new LineSelectAdapter.OnLineClickListener() {
+            @Override
+            public void onLineClick(MoreSourceBean bean, int position) {
+                String newApi = bean.getSourceUrl();
+                String oldApi = Hawk.get(HawkConfig.API_URL, "");
+                if (newApi == null || newApi.isEmpty()) return;
+                Hawk.put(HawkConfig.API_URL, newApi);
+                Hawk.put(HawkConfig.LIVE_API_URL, newApi);
+                HistoryHelper.setLiveApiHistory(newApi);
+                HistoryHelper.setApiHistory(newApi);
+                tvApi.setText(newApi);
+                refreshApiLineText();
+                dialog.dismiss();
+                if (!oldApi.equals(newApi)) {
+                    restartAppAfterConfigChanged();
+                }
+            }
+
+            @Override
+            public void onLineDelete(MoreSourceBean bean, int position) {
+                ArrayList<MoreSourceBean> historyList = getApiHistoryList();
+                for (int i = 0; i < historyList.size(); i++) {
+                    if (bean.getSourceUrl() != null && bean.getSourceUrl().equals(historyList.get(i).getSourceUrl())) {
+                        historyList.remove(i);
+                        break;
+                    }
+                }
+                saveApiHistoryList(historyList);
+                ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+                for (int i = 0; i < apiLines.size(); i++) {
+                    if (bean.getSourceUrl() != null && bean.getSourceUrl().equals(HistoryHelper.getApiLineUrl(apiLines.get(i)))) {
+                        apiLines.remove(i);
+                        break;
+                    }
+                }
+                Hawk.put(HawkConfig.API_LINE_LIST, apiLines);
+                adapterHolder[0].getData().remove(position);
+                adapterHolder[0].notifyItemRemoved(position);
+            }
+        });
+        LineSelectAdapter adapter = adapterHolder[0];
+        adapter.setData(lineBeans, selectIdx);
+        TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);
+        tvRecyclerView.setAdapter(adapter);
+        tvRecyclerView.setSelectedPosition(selectIdx);
+        if (selectIdx < 10) {
+            tvRecyclerView.setSelection(selectIdx);
+        }
+        tvRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (selectIdx >= 10) {
+                    tvRecyclerView.smoothScrollToPosition(selectIdx);
+                    tvRecyclerView.setSelectionWithSmooth(selectIdx);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * 更新配置多仓地址和线路切换右侧的文字（storeHouse解析后调用）
+     */
+    private void updateMoreSourceApiText(ArrayList<MoreSourceBean> stores) {
+        // 更新配置多仓地址右侧：显示仓库名
+        refreshStoreApiText();
+        // 更新线路切换右侧：显示当前线路名
+        refreshMoreSourceApiText();
+    }
+
+    // ===================== 多仓数据存储辅助方法（兼容ysc的custom_store_house格式） =====================
+
+    private ArrayList<MoreSourceBean> getStoreHouseList() {
+        try {
+            ArrayList<MoreSourceBean> list = (ArrayList<MoreSourceBean>) Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE, new ArrayList<MoreSourceBean>());
+            return list != null ? list : new ArrayList<MoreSourceBean>();
+        } catch (Exception e) {
+            Hawk.delete(HawkConfig.CUSTOM_STORE_HOUSE);
+            return new ArrayList<MoreSourceBean>();
+        }
+    }
+
+    private void saveStoreHouseList(ArrayList<MoreSourceBean> list) {
+        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE, list);
+    }
+
+    private MoreSourceBean getSelectedStoreHouse() {
+        try {
+            String json = Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, "");
+            if (json == null || json.isEmpty()) return null;
+            com.google.gson.Gson gson = new com.google.gson.Gson();
+            return gson.fromJson(json, MoreSourceBean.class);
+        } catch (Exception e) {
+            Hawk.delete(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED);
+            return null;
+        }
+    }
+
+    private void saveSelectedStoreHouse(MoreSourceBean bean) {
+        com.google.gson.Gson gson = new com.google.gson.Gson();
+        Hawk.put(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, gson.toJson(bean));
+    }
+
+    private ArrayList<MoreSourceBean> getApiHistoryList() {
+        try {
+            ArrayList<MoreSourceBean> list = (ArrayList<MoreSourceBean>) Hawk.get(HawkConfig.API_HISTORY_LIST, new ArrayList<MoreSourceBean>());
+            return list != null ? list : new ArrayList<MoreSourceBean>();
+        } catch (Exception e) {
+            Hawk.delete(HawkConfig.API_HISTORY_LIST);
+            return new ArrayList<MoreSourceBean>();
+        }
+    }
+
+    private void saveApiHistoryList(ArrayList<MoreSourceBean> list) {
+        Hawk.put(HawkConfig.API_HISTORY_LIST, list);
+    }
+
+    /**
+     * 刷新配置多仓地址右侧的仓库名显示
+     */
+    private void refreshStoreApiText() {
+        if (tvStoreApi == null) return;
+        String storeName = Hawk.get(HawkConfig.STORE_API_NAME, "");
+        if (storeName == null || storeName.isEmpty()) {
+            // 尝试从已保存的仓库列表中查找选中仓库名
+            try {
+                String json = Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, "");
+                if (json != null && !json.isEmpty()) {
+                    com.google.gson.Gson gson = new com.google.gson.Gson();
+                    MoreSourceBean selected = gson.fromJson(json, MoreSourceBean.class);
+                    if (selected != null && selected.getSourceName() != null) {
+                        storeName = selected.getSourceName();
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        tvStoreApi.setText(storeName);
+    }
+
+    /**
+     * 刷新线路切换右侧的线路名显示
+     */
+    private void refreshMoreSourceApiText() {
+        TextView tvMoreSourceApi = findViewById(R.id.tvMoreSourceApi);
+        if (tvMoreSourceApi == null) return;
+        ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+        String current = Hawk.get(HawkConfig.API_URL, "");
+        String lineName = "";
+        for (String apiLine : apiLines) {
+            if (current.equals(HistoryHelper.getApiLineUrl(apiLine))) {
+                lineName = HistoryHelper.getApiLineName(apiLine);
+                break;
+            }
+        }
+        tvMoreSourceApi.setText(lineName);
+    }
+
+    // ===================== 线路缓存读写方法（参照ysc zj0/x1缓存核心） =====================
+
+    /**
+     * 写入线路缓存
+     * @param cacheKey 缓存Key（"LINE_KEY" + url）
+     * @param data 缓存数据（JSON字符串）
+     * @param cacheTimeMs 缓存时间(毫秒)，-1为永久
+     */
+    private void writeLineCache(String cacheKey, String data, long cacheTimeMs) {
+        try {
+            java.io.File cacheDir = mActivity.getCacheDir();
+            String fileName = cacheKey.replaceAll("[^a-zA-Z0-9_\\-.]", "_");
+            java.io.File cacheFile = new java.io.File(cacheDir, fileName + ".cache");
+            long expireTime = cacheTimeMs == -1 ? Long.MAX_VALUE : (System.currentTimeMillis() + cacheTimeMs);
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(cacheFile);
+            String content = data + "\n---CACHE_SPLIT---\n" + expireTime;
+            fos.write(content.getBytes("UTF-8"));
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 读取线路缓存
+     * @return 缓存的JSON数据，无缓存返回null
+     */
+    private String readLineCache(String cacheKey) {
+        try {
+            java.io.File cacheDir = mActivity.getCacheDir();
+            String fileName = cacheKey.replaceAll("[^a-zA-Z0-9_\\-.]", "_");
+            java.io.File cacheFile = new java.io.File(cacheDir, fileName + ".cache");
+            if (!cacheFile.exists()) return null;
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(cacheFile));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("---CACHE_SPLIT---")) break;
+                sb.append(line);
+            }
+            reader.close();
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 检查缓存是否有效
+     */
+    private boolean isLineCacheValid(String cacheKey, long cacheTimeMs) {
+        if (cacheTimeMs == -1) return true;
+        try {
+            java.io.File cacheDir = mActivity.getCacheDir();
+            String fileName = cacheKey.replaceAll("[^a-zA-Z0-9_\\-.]", "_");
+            java.io.File cacheFile = new java.io.File(cacheDir, fileName + ".cache");
+            if (!cacheFile.exists()) return false;
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(cacheFile));
+            String line;
+            long expireTime = 0;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("---CACHE_SPLIT---")) {
+                    String nextLine = reader.readLine();
+                    if (nextLine != null) {
+                        expireTime = Long.parseLong(nextLine.trim());
+                    }
+                    break;
+                }
+            }
+            reader.close();
+            return System.currentTimeMillis() < expireTime;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 获取缓存过期时间戳
+     */
+    private long getLineCacheExpireTime(String cacheKey) {
+        try {
+            java.io.File cacheDir = mActivity.getCacheDir();
+            String fileName = cacheKey.replaceAll("[^a-zA-Z0-9_\\-.]", "_");
+            java.io.File cacheFile = new java.io.File(cacheDir, fileName + ".cache");
+            if (!cacheFile.exists()) return 0;
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(cacheFile));
+            String line;
+            long expireTime = 0;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("---CACHE_SPLIT---")) {
+                    String nextLine = reader.readLine();
+                    if (nextLine != null) {
+                        expireTime = Long.parseLong(nextLine.trim());
+                    }
+                    break;
+                }
+            }
+            reader.close();
+            return expireTime;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * 清除线路缓存（在MoreSourceDialog删除/清空时调用）
+     */
+    public static void clearAllLineCache(android.content.Context context) {
+        try {
+            java.io.File cacheDir = context.getCacheDir();
+            if (cacheDir != null && cacheDir.exists()) {
+                java.io.File[] files = cacheDir.listFiles();
+                if (files != null) {
+                    for (java.io.File file : files) {
+                        if (file.getName() != null && (file.getName().startsWith("LINE_KEY") || file.getName().endsWith(".cache"))) {
+                            file.delete();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 构建带缓存信息的标题（参照ysc y11.OooO00o）
+     * 永久缓存: "选择线路\n线路缓存永久生效"
+     * 无缓存: "选择线路\n当前使用接口数据"
+     * 有缓存: "选择线路\n线路缓存将于X天X小时后更新"
+     */
+    private String buildCacheInfoTitle() {
+        if (currentLineCacheTime == -1) {
+            return "选择线路\n线路缓存永久生效";
+        }
+        long localExpire = getLineCacheExpireTime(currentLineCacheKey);
+        if (localExpire <= 0) {
+            return "选择线路\n当前使用接口数据";
+        }
+        long remaining = (currentLineCacheTime + localExpire) - System.currentTimeMillis();
+        if (remaining <= 0) {
+            return "选择线路\n当前使用接口数据";
+        }
+        return "选择线路\n线路缓存将于" + formatCacheTime(remaining) + "后更新";
+    }
+
+    /**
+     * 格式化缓存剩余时间（参照ysc y11.OooO00o: 天/小时/分钟/秒）
+     */
+    private String formatCacheTime(long millis) {
+        String[] units = {"天", "小时", "分钟", "秒", "毫秒"};
+        int[] divisors = {86400000, 3600000, 60000, 1000, 1};
+        int maxUnits = Math.min(2, 5);
+        StringBuilder sb = new StringBuilder();
+        if (millis == 0) {
+            return "0" + units[0];
+        }
+        if (millis < 0) {
+            sb.append("-");
+            millis = -millis;
+        }
+        for (int i = 0; i < maxUnits; i++) {
+            long div = divisors[i];
+            if (millis >= div) {
+                long count = millis / div;
+                millis -= div * count;
+                sb.append(count).append(units[i]);
+            }
+        }
+        return sb.toString();
+    }
+
+    // ===================== 直播源相关方法 =====================
+    private void showLiveSourceDialog() {
+        LiveSourceDialog dialog = new LiveSourceDialog(mActivity);
+        EventBus.getDefault().register(dialog);
+        dialog.setOnListener(new LiveSourceDialog.OnListener() {
+            @Override
+            public void onAdd(LiveSourceBean bean) {
+                Hawk.put(HawkConfig.LIVE_API_URL, bean.getSourceUrl());
+                Toast.makeText(mContext, "直播源已保存", Toast.LENGTH_SHORT).show();
+                refreshLiveApiText();
+            }
+        });
+        dialog.setOnBranchSelectListener(new LiveSourceDialog.OnBranchSelectListener() {
+            @Override
+            public void onBranchSelected(String displayName) {
+                if (tvLiveApiText != null) {
+                    tvLiveApiText.setText(displayName);
+                }
+                refreshLiveApiText();
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ((BaseActivity) mActivity).hideSysBar();
+                EventBus.getDefault().unregister(dialog);
+            }
+        });
+        dialog.show();
+    }
+
+    private void refreshLiveApiText() {
+        if (tvLiveApiText == null) return;
+        String liveName = "";
+        com.google.gson.JsonArray livesGroups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new com.google.gson.JsonArray());
+        if (livesGroups.size() > 0) {
+            int idx = ApiConfig.getLiveGroupIndex();
+            if (idx >= livesGroups.size()) idx = 0;
+            com.google.gson.JsonObject obj = livesGroups.get(idx).getAsJsonObject();
+            String entryName = obj.has("name") ? obj.get("name").getAsString().trim() : "";
+            String storeName = getSelectedStoreHouseName();
+            liveName = buildLiveSourceDisplayName(entryName, storeName, idx);
+        }
+        if (liveName.startsWith("线路") && livesGroups.size() <= 1) {
+            String liveUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+            if (!liveUrl.isEmpty()) {
+                ArrayList<String> liveHistory = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
+                for (String item : liveHistory) {
+                    String itemUrl = HistoryHelper.getApiLineUrl(item);
+                    if (liveUrl.equals(itemUrl)) {
+                        String historyName = HistoryHelper.getApiLineName(item);
+                        if (historyName != null && !historyName.isEmpty()) {
+                            liveName = historyName;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        tvLiveApiText.setText(liveName);
+    }
+
+    private String buildLiveSourceDisplayName(String entryName, String storeName, int index) {
+        if (entryName == null) entryName = "";
+        if (storeName == null || storeName.isEmpty()) storeName = "";
+        if (entryName.isEmpty() || entryName.startsWith("http") || entryName.startsWith("clan")) {
+            if (!storeName.isEmpty()) return storeName + "直播";
+            return "线路" + (index + 1);
+        }
+        if (!storeName.isEmpty()) return entryName + "直播" + storeName;
+        return entryName;
+    }
+
+    private String getSelectedStoreHouseName() {
+        String name = Hawk.get(HawkConfig.STORE_API_NAME, "");
+        if (name != null && !name.isEmpty()) return name;
+        try {
+            String json = Hawk.get(HawkConfig.CUSTOM_STORE_HOUSE_SELECTED, "");
+            if (json != null && !json.isEmpty()) {
+                com.google.gson.Gson gson = new com.google.gson.Gson();
+                MoreSourceBean selected = gson.fromJson(json, MoreSourceBean.class);
+                if (selected != null && selected.getSourceName() != null) {
+                    return selected.getSourceName();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        try {
+            ArrayList<MoreSourceBean> apiHistory = getApiHistoryList();
+            String currentApi = Hawk.get(HawkConfig.API_URL, "");
+            for (MoreSourceBean bean : apiHistory) {
+                if (currentApi.equals(bean.getSourceUrl()) && bean.getSourceName() != null && !bean.getSourceName().isEmpty()) {
+                    return bean.getSourceName();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return "";
     }
 }

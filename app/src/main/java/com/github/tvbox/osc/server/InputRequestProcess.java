@@ -60,6 +60,28 @@ public class InputRequestProcess implements RequestProcess {
                             }
                             break;
                         }
+                        case "pushStore": {
+                            String storeName = params.get("pushStore_name");
+                            String storeUrl = params.get("pushStore_url");
+                            if (storeUrl != null && storeUrl.trim().length() > 0) {
+                                mDataReceiver.onPushStoreReceived(
+                                    storeName != null ? storeName.trim() : "",
+                                    storeUrl.trim()
+                                );
+                            }
+                            break;
+                        }
+                        case "livePush": {
+                            String liveName = params.get("live_name");
+                            String liveAddress = params.get("live_address");
+                            if (liveAddress != null && liveAddress.trim().length() > 0) {
+                                mDataReceiver.onLivePushReceived(
+                                    liveName != null ? liveName.trim() : "",
+                                    liveAddress.trim()
+                                );
+                            }
+                            break;
+                        }
                     }
                 }
                 return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.OK, "ok");

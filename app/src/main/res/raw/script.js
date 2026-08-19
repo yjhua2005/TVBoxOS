@@ -18,6 +18,20 @@ function push() {
     doAction('push', { url: $('#push_url').val() });
 }
 
+function pushStore() {
+    doAction('pushStore', {
+        pushStore_name: $('#diy_store_name').val(),
+        pushStore_url: $('#diy_store_url').val()
+    });
+}
+
+function livePush() {
+    doAction('livePush', {
+        live_name: $('#live_name').val(),
+        live_address: $('#live_address').val()
+    });
+}
+
 function doAction(action, kv) {
     kv['do'] = action;
     // alert(JSON.stringify(kv));
@@ -280,4 +294,4 @@ else if (url.indexOf('api.html') > 0)
 else if (url.indexOf('all.html') > 0)
     showPanel(3);
 else
-    showPanel(1);
+    showPanel(3);

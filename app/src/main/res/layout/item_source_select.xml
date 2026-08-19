@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:focusable="false"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/vs_50"
+    android:layout_marginLeft="@dimen/vs_10"
+    android:layout_marginRight="@dimen/vs_10"
+    android:layout_marginTop="@dimen/vs_5"
+    android:layout_marginBottom="@dimen/vs_5"
+    android:paddingLeft="@dimen/vs_10"
+    android:paddingRight="@dimen/vs_10">
+    <TextView
+        android:textSize="@dimen/ts_22"
+        android:textColor="@color/dialog_text_primary"
+        android:id="@+id/tvName"
+        android:background="@drawable/button_danmu_setting"
+        android:focusable="true"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="@dimen/vs_5"
+        android:paddingRight="@dimen/vs_5"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:gravity="center_vertical"/>
+
+    <View
+        android:layout_width="@dimen/vs_1"
+        android:layout_height="@dimen/vs_20"
+        android:background="#20000000"
+        android:layout_marginLeft="@dimen/vs_5"
+        android:layout_marginRight="@dimen/vs_5"/>
+    <ImageView
+        android:id="@+id/ivDelete"
+        android:src="@drawable/icon_delete"
+        android:background="@drawable/button_danmu_setting"
+        android:layout_width="@dimen/vs_50"
+        android:layout_height="@dimen/vs_50"
+        android:scaleType="centerInside"
+        android:focusable="true"
+        android:contentDescription="删除"/>
+</LinearLayout>

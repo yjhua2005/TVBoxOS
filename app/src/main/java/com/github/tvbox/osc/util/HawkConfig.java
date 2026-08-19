@@ -66,5 +66,28 @@ public class HawkConfig {
     public static final String DANMU_SIZE_SCALE = "danmu_size_scale";
     public static final String DANMU_RANDOM_COLOR = "danmu_random_color";
     public static final String DANMU_API = "danmu_api";
+    public static final String API_MAP = "api_map";
+    public static final String API_NAME_HISTORY = "api_name_history";
+    public static final String API_NAME = "api_name";
+    public static final String STORE_API = "store_api";
+    public static final String STORE_API_NAME = "store_api_name";
+    public static final String STORE_API_NAME_HISTORY = "store_api_name_history";
+    public static final String STORE_API_MAP = "store_api_map";
+    public static final String DEFAULT_STORE_API = "default_store_api";
+    public static final String CUSTOM_STORE_HOUSE = "custom_store_house";
+    public static final String CUSTOM_STORE_HOUSE_SELECTED = "custom_store_house_selected";
+    public static final String API_HISTORY_LIST = "api_history_list";
+    public static final String LIVE_URL = "live_url";
+    public static final String LIVE_HISTORY = "live_history";
+
+    // ========== 线路缓存配置 ==========
+    /**
+     * 线路缓存时间（天），默认1天
+     * -1 = 永久缓存
+     * 0 = 不缓存
+     * N = 缓存N天
+     */
+    public static final String CACHE_TIME = "CACHE_TIME";
+
     public static boolean hotVodDelete;
 }

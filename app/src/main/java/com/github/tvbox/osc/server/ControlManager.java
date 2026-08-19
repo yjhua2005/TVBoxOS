@@ -105,6 +105,20 @@ public class ControlManager {
                 public void onPushReceived(String url) {
                     PushReceiver.send(mContext, url);
                 }
+
+                @Override
+                public void onPushStoreReceived(String name, String url) {
+                    if (!TextUtils.isEmpty(url)) {
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PUSH_STORE, url, name));
+                    }
+                }
+
+                @Override
+                public void onLivePushReceived(String name, String address) {
+                    if (!TextUtils.isEmpty(address)) {
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_LIVE_PUSH, address, name));
+                    }
+                }
             });
             try {
                 mServer.start();

@@ -25,8 +25,11 @@ public class RefreshEvent {
     public static final int TYPE_SET_DANMU_SETTINGS = 18;
     public static final int TYPE_DANMU_REFRESH = 19;
     public static final int TYPE_PLAY_QUALITY = 20;
+    public static final int TYPE_PUSH_STORE = 21;
+    public static final int TYPE_LIVE_PUSH = 22;
     public int type;
     public Object obj;
+    public Object obj2;
 
     public RefreshEvent(int type) {
         this.type = type;
@@ -35,5 +38,11 @@ public class RefreshEvent {
     public RefreshEvent(int type, Object obj) {
         this.type = type;
         this.obj = obj;
+    }
+
+    public RefreshEvent(int type, Object obj, Object obj2) {
+        this.type = type;
+        this.obj = obj;
+        this.obj2 = obj2;
     }
 }
