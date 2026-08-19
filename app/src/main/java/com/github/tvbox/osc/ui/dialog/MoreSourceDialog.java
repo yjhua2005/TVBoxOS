@@ -76,6 +76,19 @@ public class MoreSourceDialog extends BaseDialog {
     private ItemTouchHelper itemTouchHelper;
 
     /**
+     * 本地文件选择回调接口（参照ApiDialog.OnListener.onLocalConfig）
+     */
+    public interface OnLocalFileListener {
+        void onLocalFileSelected();
+    }
+
+    private OnLocalFileListener onLocalFileListener;
+
+    public void setOnLocalFileListener(OnLocalFileListener listener) {
+        this.onLocalFileListener = listener;
+    }
+
+    /**
      * 仓库选中回调接口（参照ysc a21: 选中仓库后直接触发线路切换）
      */
     public interface OnStoreSelectedListener {
@@ -120,6 +133,16 @@ public class MoreSourceDialog extends BaseDialog {
         // ========== 功能: 自动加载第一个仓库（参照ysc h21.OooO00o） ==========
         // 对话框打开时，如果api_url为空，自动请求第一个仓库的线路
         autoLoadFirstStore();
+
+        // 本地文件按钮（参照ApiDialog的"选择"按钮，打开本地文件选择器）
+        findViewById(R.id.inputLocalFile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onLocalFileListener != null) {
+                    onLocalFileListener.onLocalFileSelected();
+                }
+            }
+        });
 
         // 确定按钮 -> 添加新仓库
         findViewById(R.id.inputSubmit).setOnClickListener(new View.OnClickListener() {
@@ -287,8 +310,8 @@ public class MoreSourceDialog extends BaseDialog {
                         response.close();
                         // 复用 ApiConfig.FindResult 解密 + 后处理
                         body = ApiConfig.FindResult(body, configKey);
-                        if (finalRawUrl.startsWith("clan")) {
-                            body = apiConfig.clanContentFix(apiConfig.clanToAddress(finalRawUrl), body);
+                        if (finalRawUrl.startsWith("clan") || finalRawUrl.startsWith("file://")) {
+                            body = apiConfig.clanContentFix(finalUrl, body);
                         }
                         body = apiConfig.fixContentPath(finalRawUrl, body);
                         // 解析线路列表
@@ -343,6 +366,16 @@ public class MoreSourceDialog extends BaseDialog {
     }
 
     // ===================== 标题长按清空所有仓库（参照ysc cn0 case 1 + y81确认） =====================
+
+    /**
+     * 设置本地文件选择后的URL（参照ApiDialog.setLocalApi）
+     * 由ModelSettingFragment在onActivityResult中回调
+     */
+    public void setLocalFileUrl(String url) {
+        if (url != null && !url.isEmpty()) {
+            inputSourceUrl.setText(url);
+        }
+    }
 
     /**
      * 确认对话框回调接口（参照ysc x81）
@@ -612,8 +645,8 @@ public class MoreSourceDialog extends BaseDialog {
 
                     // 复用 ApiConfig.FindResult 解密 + 后处理（与配置地址完全一致的解析逻辑）
                     String strFindResult = ApiConfig.FindResult(body, configKey);
-                    if (url.startsWith("clan")) {
-                        strFindResult = apiConfig.clanContentFix(apiConfig.clanToAddress(url), strFindResult);
+                    if (url.startsWith("clan") || url.startsWith("file://")) {
+                        strFindResult = apiConfig.clanContentFix(fetchUrl, strFindResult);
                     }
                     strFindResult = apiConfig.fixContentPath(url, strFindResult);
 

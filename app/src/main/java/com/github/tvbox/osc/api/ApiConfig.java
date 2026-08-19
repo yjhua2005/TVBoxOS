@@ -4,6 +4,7 @@ import static com.github.tvbox.osc.util.RegexUtils.getPattern;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -171,7 +172,24 @@ public class ApiConfig {
     public String configUrl(String apiUrl){
         TempKey = null;
         String configUrl = "", pk = ";pk;";
-        apiUrl=apiUrl.replace("file://", "clan://localhost/");
+        // 正确解析file://协议：处理三斜杠file:///和绝对路径重复问题
+        if (apiUrl.startsWith("file://")) {
+            String filePath = apiUrl.substring(7); // 去掉"file://"
+            if (filePath.startsWith("/")) {
+                filePath = filePath.substring(1); // 去掉多余斜杠（file:///path → path）
+            }
+            // 如果是绝对路径且以存储根目录开头，转为相对路径
+            String storageRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
+            if (filePath.startsWith(storageRoot)) {
+                filePath = filePath.substring(storageRoot.length());
+            }
+            if (filePath.startsWith("/")) {
+                filePath = filePath.substring(1); // 去掉开头的/
+            }
+            apiUrl = "clan://localhost/" + filePath;
+        } else {
+            apiUrl=apiUrl.replace("file://", "clan://localhost/");
+        }
         if (apiUrl.contains(pk)) {
             String[] a = apiUrl.split(pk);
             TempKey = a[1];
@@ -388,8 +406,8 @@ public class ApiConfig {
                         error = "empty body";
                     } else {
                         result = FindResult(response.body().string(), configKey);
-                        if (apiUrl.startsWith("clan")) {
-                            result = clanContentFix(clanToAddress(apiUrl), result);
+                        if (apiUrl.startsWith("clan") || apiUrl.startsWith("file://")) {
+                            result = clanContentFix(requestUrl, result);
                         }
                         result = fixContentPath(apiUrl, result);
                     }

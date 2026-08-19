@@ -132,6 +132,22 @@
         app:layout_constraintRight_toRightOf="parent"/>
     <TextView
         android:textSize="@dimen/ts_22"
+        android:textColor="@color/dialog_text_primary"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:id="@+id/inputLocalFile"
+        android:background="@drawable/button_danmu_setting"
+        android:padding="@dimen/vs_10"
+        android:focusable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/vs_5"
+        android:layout_marginBottom="@dimen/vs_10"
+        android:text="浏览"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/inputSubmit"/>
+    <TextView
+        android:textSize="@dimen/ts_22"
         android:textColor="@color/color_FFFFFF"
         android:gravity="center"
         android:layout_gravity="center"

@@ -84,6 +84,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 public class ModelSettingFragment extends BaseLazyFragment {
     private static final int REQUEST_LOCAL_CONFIG = 1001;
+    private static final int REQUEST_LOCAL_STORE_FILE = 1002;
     private TextView tvDebugOpen;
     private TextView tvMediaCodec;
     private TextView tvParseWebView;
@@ -109,6 +110,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvIjkCachePlay;
     private TextView tvHomeDefaultShow;
     private ApiDialog apiDialog;
+    private MoreSourceDialog moreSourceDialog;
     private boolean selectLocalLive;
     private TextView tvDanmuOpenText;
     private TextView tvDanmuApiText;
@@ -1023,6 +1025,20 @@ public class ModelSettingFragment extends BaseLazyFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOCAL_STORE_FILE) {
+            if (resultCode != android.app.Activity.RESULT_OK || data == null || data.getData() == null) {
+                return;
+            }
+            String api = localConfigToApi(data.getData());
+            if (api == null || api.isEmpty()) {
+                Toast.makeText(getContext(), "读取本地配置失败", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (moreSourceDialog != null) {
+                moreSourceDialog.setLocalFileUrl(api);
+            }
+            return;
+        }
         if (requestCode != REQUEST_LOCAL_CONFIG || resultCode != android.app.Activity.RESULT_OK || data == null || data.getData() == null) {
             return;
         }
@@ -1190,6 +1206,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
      */
     private void showStoreHouseDialog() {
         MoreSourceDialog dialog = new MoreSourceDialog(mActivity);
+        moreSourceDialog = dialog;
         // EventBus注册由dialog.show()内部自行处理，此处不再重复注册
         // 参照ysc a21: 选中仓库后dismiss，然后直接弹出线路切换
         dialog.setOnStoreSelectedListener(new MoreSourceDialog.OnStoreSelectedListener() {
@@ -1198,14 +1215,56 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 showLineSwitchDialog();
             }
         });
+        // 本地文件选择回调（参照ApiDialog的onLocalConfig流程）
+        dialog.setOnLocalFileListener(new MoreSourceDialog.OnLocalFileListener() {
+            @Override
+            public void onLocalFileSelected() {
+                if (!XXPermissions.isGranted(mContext, Permission.Group.STORAGE)) {
+                    Toast.makeText(getContext(), "请选择文件前需要先授予存储权限", Toast.LENGTH_SHORT).show();
+                    XXPermissions.with(mActivity)
+                            .permission(Permission.Group.STORAGE)
+                            .request(new OnPermissionCallback() {
+                                @Override
+                                public void onGranted(List<String> permissions, boolean all) {
+                                    if (all) {
+                                        Toast.makeText(getContext(), "已获得存储权限", Toast.LENGTH_SHORT).show();
+                                        openLocalFileForStore();
+                                    }
+                                }
+
+                                @Override
+                                public void onDenied(List<String> permissions, boolean never) {
+                                    if (never) {
+                                        Toast.makeText(getContext(), "获取存储权限失败,请在系统设置中开启", Toast.LENGTH_SHORT).show();
+                                        XXPermissions.startPermissionActivity(mActivity, permissions);
+                                    } else {
+                                        Toast.makeText(getContext(), "获取存储权限失败", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                    return;
+                }
+                openLocalFileForStore();
+            }
+        });
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 ((BaseActivity) mActivity).hideSysBar();
                 // EventBus反注册由dialog.dismiss()内部自行处理，此处不再重复
+                moreSourceDialog = null;
             }
         });
         dialog.show();
+    }
+
+    /**
+     * 打开本地文件选择器（用于多仓配置，参照openLocalFileActivity）
+     */
+    private void openLocalFileForStore() {
+        Intent intent = new Intent(mContext, LocalFileActivity.class);
+        intent.putExtra(LocalFileActivity.EXTRA_LIVE, false);
+        startActivityForResult(intent, REQUEST_LOCAL_STORE_FILE);
     }
 
     /**
@@ -1393,7 +1452,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 if (cacheValid) {
                     // 缓存有效，解密后再使用（缓存存的是原始响应）
                     String decryptedCache = ApiConfig.FindResult(cachedBody, configKey);
-                    if (rawUrl != null && rawUrl.startsWith("clan")) {
+                    if (rawUrl != null && (rawUrl.startsWith("clan") || rawUrl.startsWith("file://"))) {
                         decryptedCache = ApiConfig.get().clanContentFix(fetchUrl, decryptedCache);
                     }
                     decryptedCache = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, decryptedCache);
@@ -1441,7 +1500,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         // 复用 ApiConfig.FindResult 解密 + 后处理（与 MoreSourceDialog.addStoreToLayout 完全一致）
                         ApiConfig apiConfig = ApiConfig.get();
                         body = ApiConfig.FindResult(body, configKey);
-                        if (rawUrl != null && rawUrl.startsWith("clan")) {
+                        if (rawUrl != null && (rawUrl.startsWith("clan") || rawUrl.startsWith("file://"))) {
                             body = apiConfig.clanContentFix(fetchUrl, body);
                         }
                         body = apiConfig.fixContentPath(rawUrl != null ? rawUrl : fetchUrl, body);
@@ -1479,7 +1538,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                                 });
                                 // 缓存数据也需要解密
                                 String decrypted = ApiConfig.FindResult(cachedBody, configKey);
-                                if (rawUrl != null && rawUrl.startsWith("clan")) {
+                                if (rawUrl != null && (rawUrl.startsWith("clan") || rawUrl.startsWith("file://"))) {
                                     decrypted = ApiConfig.get().clanContentFix(fetchUrl, decrypted);
                                 }
                                 decrypted = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, decrypted);
@@ -1501,7 +1560,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                                 }
                             });
                             String decrypted = ApiConfig.FindResult(cachedBody, configKey);
-                            if (rawUrl != null && rawUrl.startsWith("clan")) {
+                            if (rawUrl != null && (rawUrl.startsWith("clan") || rawUrl.startsWith("file://"))) {
                                 decrypted = ApiConfig.get().clanContentFix(fetchUrl, decrypted);
                             }
                             decrypted = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, decrypted);
@@ -1671,7 +1730,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     if (body != null && !body.isEmpty()) {
                         // 复用 ApiConfig.FindResult 解密
                         body = ApiConfig.FindResult(body, configKey);
-                        if (rawUrl != null && rawUrl.startsWith("clan")) {
+                        if (rawUrl != null && (rawUrl.startsWith("clan") || rawUrl.startsWith("file://"))) {
                             body = ApiConfig.get().clanContentFix(fetchUrl, body);
                         }
                         body = ApiConfig.get().fixContentPath(rawUrl != null ? rawUrl : fetchUrl, body);
