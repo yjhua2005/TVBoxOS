@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- DriveTvRecyclerView 自定义属性（替代 TvRecyclerView 的 app:tv_* 属性） -->
+    <declare-styleable name="DriveTvRecyclerView">
+        <attr name="tv_verticalSpacingWithMargins" format="dimension" />
+        <attr name="tv_horizontalSpacingWithMargins" format="dimension" />
+        <attr name="tv_layoutManager" format="string" />
+        <attr name="tv_selectedItemIsCentered" format="boolean" />
+    </declare-styleable>
+</resources>

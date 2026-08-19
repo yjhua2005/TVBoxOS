@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ==================== Common Buttons ==================== -->
+    <string name="drive_btn_confirm">OK</string>
+    <string name="drive_btn_cancel">Cancel</string>
+    <string name="drive_btn_scan">Scan</string>
+    <string name="drive_btn_scanning">Scanning</string>
+    <string name="drive_btn_add">Add</string>
+    <string name="drive_btn_not_now">Not Now</string>
+    <string name="drive_btn_browse">Browse</string>
+    <string name="drive_btn_start">Start</string>
+    <string name="drive_btn_stop">Stop</string>
+    <string name="drive_btn_running">Running</string>
+    <string name="drive_btn_stopped">Stopped</string>
+
+    <!-- ==================== DriveActivity ==================== -->
+    <string name="drive_act_drive">Storage</string>
+    <string name="drive_perm_denied">Storage permission denied, cannot add local directory</string>
+    <string name="drive_perm_not_granted">Storage permission not granted, cannot add local directory</string>
+    <string name="drive_choose_type">Please select storage type</string>
+    <string name="drive_deleted">Deleted</string>
+    <string name="drive_delete_fail_data">Delete failed: data error</string>
+    <string name="drive_delete_fail_not_found">Delete failed, record not found (id=%1$d)</string>
+    <string name="drive_no_remote_extract">Remote archive extraction is not supported</string>
+    <string name="drive_no_play_callback">No play callback set, cannot play</string>
+    <string name="drive_sort_name_asc">Name A-Z</string>
+    <string name="drive_sort_name_desc">Name Z-A</string>
+    <string name="drive_sort_time_asc">Oldest first</string>
+    <string name="drive_sort_time_desc">Newest first</string>
+    <string name="drive_choose_sort">Select sort order</string>
+    <string name="drive_path_empty">Path cannot be empty</string>
+    <string name="drive_dir_not_exist">Directory does not exist: %1$s</string>
+    <string name="drive_dir_already_added">This folder has already been added to the storage list!</string>
+    <string name="drive_usb_removed">USB drive removed</string>
+    <string name="drive_usb_detected">USB drive detected</string>
+    <string name="drive_usb_add_prompt">External storage detected (%1$s). Add to storage list?</string>
+    <string name="drive_usb_added">Added: %1$s</string>
+    <string name="drive_cannot_access_archive">Cannot access the archive file</string>
+    <string name="drive_cannot_find_archive_dir">Cannot determine the archive directory</string>
+    <string name="drive_extracting">Extracting...</string>
+    <string name="drive_extracted">Extracted: %1$s</string>
+    <string name="drive_extract_fail">Extraction failed: %1$s</string>
+    <string name="drive_start_extract">Starting extraction...</string>
+    <string name="drive_extract_done">Extraction complete: %1$s</string>
+    <string name="drive_search_result">Search Results</string>
+    <string name="drive_perm_dialog_title">Storage Permission Required</string>
+    <string name="drive_perm_dialog_msg">Local directory browsing requires storage permission. Grant now?</string>
+    <string name="drive_perm_dialog_go">Grant</string>
+    <string name="drive_perm_dialog_later">Later</string>
+    <string name="drive_play_name">Storage</string>
+
+    <!-- ==================== FolderPickerDialog ==================== -->
+    <string name="drive_picker_title">Select Local Directory</string>
+    <string name="drive_picker_already_root">Already at root directory</string>
+    <string name="drive_picker_no_dirs">No browsable directories found. Please grant storage permission.</string>
+    <string name="drive_picker_cannot_access">Cannot access: %1$s</string>
+    <string name="drive_picker_usb_fail">Cannot read USB drive. Please ensure it is properly connected and storage permission is granted.</string>
+    <string name="drive_picker_read_fail">Cannot read directory: %1$s</string>
+    <string name="drive_picker_confirm_dir">Select This Directory</string>
+    <string name="drive_picker_go_up">Go Up</string>
+    <string name="drive_picker_external">External Storage</string>
+
+    <!-- ==================== SmbDriveDialog ==================== -->
+    <string name="drive_smb_please_name">Please enter a storage name</string>
+    <string name="drive_smb_please_addr">Please enter the SMB server address</string>
+    <string name="drive_smb_please_share">Please enter the share name</string>
+    <string name="drive_smb_port_invalid">Invalid port format</string>
+    <string name="drive_smb_scan_hint">Scanning LAN for SMB devices, please wait...</string>
+    <string name="drive_smb_not_found">No SMB devices found</string>
+    <string name="drive_smb_found">Found %1$d SMB device(s)</string>
+    <string name="drive_smb_choose_version">Select SMB Version</string>
+    <string name="drive_smb_version_auto">Auto</string>
+    <string name="drive_smb_version_1">SMB 1.0</string>
+    <string name="drive_smb_version_2">SMB 2.0</string>
+    <string name="drive_smb_version_3">SMB 3.0</string>
+
+    <!-- ==================== FtpDriveDialog ==================== -->
+    <string name="drive_ftp_please_name">Please enter a storage name</string>
+    <string name="drive_ftp_please_addr">Please enter the FTP server address</string>
+    <string name="drive_ftp_port_invalid">Invalid port format</string>
+
+    <!-- ==================== FtpServerConfigDialog ==================== -->
+    <string name="drive_ftp_server_title">FTP Server</string>
+    <string name="drive_ftp_server_stopped_hint">FTP server stopped</string>
+    <string name="drive_ftp_server_please_port">Please enter a port</string>
+    <string name="drive_ftp_server_port_invalid">Invalid port format</string>
+    <string name="drive_ftp_server_port_range">Port range: 1-65535</string>
+    <string name="drive_ftp_server_please_root">Please select a root directory</string>
+    <string name="drive_ftp_server_root_not_exist">Root directory does not exist: %1$s</string>
+    <string name="drive_ftp_server_started">FTP server started</string>
+    <string name="drive_ftp_server_start_fail">Start failed, port may be in use</string>
+
+    <!-- ==================== WebdavDialog ==================== -->
+    <string name="drive_webdav_please_name">Please enter a storage name</string>
+    <string name="drive_webdav_please_url">Please enter the WebDAV address</string>
+
+    <!-- ==================== AlistDriveDialog ==================== -->
+    <string name="drive_alist_please_name">Please enter a storage name</string>
+    <string name="drive_alist_please_url">Please enter the Alist URL</string>
+
+    <!-- ==================== ArchiveExtractDialog ==================== -->
+    <string name="drive_extract_to_same_dir">Extract to same-named directory</string>
+    <string name="drive_extract_to_current_dir">Extract to current directory</string>
+    <string name="drive_extract_choose_dir">Select directory to extract</string>
+    <string name="drive_extract_preparing">Preparing...</string>
+    <string name="drive_extract_progress">Extracting: %1$s</string>
+    <string name="drive_extract_complete">Extraction complete: %1$s</string>
+    <string name="drive_extract_error">Extraction failed: %1$s</string>
+
+    <!-- ==================== ViewModel Error Messages ==================== -->
+    <string name="drive_err_smb_connect">Cannot connect to SMB server</string>
+    <string name="drive_err_smb_access">SMB access failed: %1$s</string>
+    <string name="drive_err_local_read">Error reading directory: %1$s</string>
+    <string name="drive_err_local_not_exist">Directory does not exist: %1$s</string>
+    <string name="drive_err_local_perm">Cannot read directory contents. Please grant storage permission.</string>
+    <string name="drive_err_ftp_connect">Cannot connect to FTP server</string>
+    <string name="drive_err_ftp_list">Cannot list FTP directory: %1$s</string>
+    <string name="drive_err_ftp_access">FTP access failed: %1$s</string>
+    <string name="drive_err_webdav_access">Cannot access the WebDAV address</string>
+    <string name="drive_err_alist_access">Cannot access. Please check the URL format.</string>
+    <string name="drive_err_archive_read">Cannot read archive: %1$s</string>
+    <string name="drive_err_archive_unsupported">Unsupported archive format: %1$s</string>
+    <string name="drive_err_archive_not_found">Not found in archive: %1$s</string>
+
+    <!-- ==================== Dialog Labels ==================== -->
+    <string name="drive_label_name">Name</string>
+    <string name="drive_label_addr">Server Address</string>
+    <string name="drive_label_port">Port</string>
+    <string name="drive_label_init_path">Initial Path</string>
+    <string name="drive_label_username">Username</string>
+    <string name="drive_label_password">Password</string>
+    <string name="drive_label_encoding">Encoding</string>
+    <string name="drive_label_share_name">Share Name</string>
+    <string name="drive_label_domain">Domain</string>
+    <string name="drive_label_smb_version">SMB Version</string>
+    <string name="drive_label_root_dir">Root Directory</string>
+    <string name="drive_label_ftp_server">FTP Server</string>
+    <string name="drive_label_webdav_addr">WebDAV Address</string>
+    <string name="drive_label_alist_addr">Alist Address</string>
+
+    <!-- ==================== Storage Type Names ==================== -->
+    <string name="drive_type_local">Local Directory</string>
+    <string name="drive_type_webdav">WebDAV</string>
+    <string name="drive_type_alist">Alist Web</string>
+    <string name="drive_type_ftp">FTP Client</string>
+    <string name="drive_type_ftp_server">FTP Server</string>
+    <string name="drive_type_smb">SMB</string>
+</resources>

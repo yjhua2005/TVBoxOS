@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape>
+            <corners android:radius="@dimen/drive_vs_6" />
+            <solid android:color="@color/drive_dialog_control_bg_focused" />
+            <stroke
+                android:width="@dimen/drive_vs_1"
+                android:color="@color/drive_dialog_control_stroke_focused" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <corners android:radius="@dimen/drive_vs_6" />
+            <solid android:color="@color/drive_dialog_control_bg" />
+            <stroke
+                android:width="@dimen/drive_vs_1"
+                android:color="@color/drive_dialog_control_stroke" />
+        </shape>
+    </item>
+</selector>

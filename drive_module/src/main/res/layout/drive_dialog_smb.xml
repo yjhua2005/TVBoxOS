@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/drive_vs_600"
+    android:layout_height="wrap_content"
+    android:background="@drawable/drive_shape_dialog_bg_main"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/drive_vs_20"
+    android:paddingTop="@dimen/drive_vs_10"
+    android:paddingRight="@dimen/drive_vs_20"
+    android:paddingBottom="@dimen/drive_vs_10">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 空间名称 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_name"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="@string/drive_label_name"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- 服务器地址 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_addr"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etHost"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="如 192.168.1.100"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <TextView
+                android:id="@+id/btnScan"
+                android:layout_width="@dimen/drive_vs_120"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_marginLeft="@dimen/drive_vs_8"
+                android:layout_marginStart="@dimen/drive_vs_8"
+                android:background="@drawable/drive_button_dialog_main"
+                android:gravity="center"
+                android:text="@string/drive_btn_scan"
+                android:focusable="true"
+                android:clickable="true"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- 端口 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_port"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etPort"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="445"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- 共享名称 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_share_name"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etShareName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="如 movies、shared"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- 域名 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_domain"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etDomain"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="工作组留空"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- 用户名 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_username"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="Guest"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- 密码 -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_password"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="Guest"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <!-- SMB版本（可点击选择） -->
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_smb_version"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <TextView
+                android:id="@+id/tvSmbVersion"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:text="@string/drive_smb_version_auto"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20"
+                android:focusable="true"
+                android:clickable="true" />
+        </TableRow>
+    </TableLayout>
+
+    <!-- 操作按钮 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/drive_vs_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnConfirm"
+            android:layout_width="@dimen/drive_vs_120"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/drive_vs_100"
+            android:layout_marginRight="@dimen/drive_vs_100"
+            android:background="@drawable/drive_button_dialog_main"
+            android:focusable="true"
+            android:gravity="center"
+            android:padding="@dimen/drive_vs_10"
+            android:text="@string/drive_btn_confirm"
+            android:textColor="@color/drive_dialog_text_primary"
+            android:textSize="@dimen/drive_vs_20" />
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="@dimen/drive_vs_120"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/drive_button_dialog_main"
+            android:focusable="true"
+            android:gravity="center"
+            android:padding="@dimen/drive_vs_10"
+            android:text="@string/drive_btn_cancel"
+            android:textColor="@color/drive_dialog_text_primary"
+            android:textSize="@dimen/drive_vs_20" />
+    </LinearLayout>
+
+</LinearLayout>

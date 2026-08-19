@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.github.tvbox.osc.drive'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 19
+        targetSdk 34
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    // AndroidX — 全部用 implementation，避免与宿主版本/资源冲突
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Room（独立数据库）
+    implementation 'androidx.room:room-runtime:2.3.0'
+    annotationProcessor 'androidx.room:room-compiler:2.3.0'
+
+    // Gson（JSON 解析）
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // OkHttp（Alist HTTP 请求）— 宿主已有，用 implementation 让宿主版本优先
+    implementation 'com.squareup.okhttp3:okhttp:3.12.11'
+
+    // Sardine（WebDAV 客户端）— 匹配宿主已有的 0.8 版本
+    implementation 'com.github.thegrizzlylabs:sardine-android:0.8'
+
+    // Commons Net（FTP 客户端）
+    implementation 'commons-net:commons-net:3.10.0'
+
+    // SMBJ（SMB 2.0/3.0 客户端）
+    implementation 'com.hierynomus:smbj:0.11.5'
+
+    // JCIFS-NG（SMB 1.0 / CIFS 客户端）
+    implementation 'eu.agno3.jcifs:jcifs-ng:2.1.10'
+    // Commons Compress + XZ（ZIP/7Z 解压，纯 Java 无 native）
+    implementation 'org.apache.commons:commons-compress:1.26.0'
+    implementation 'org.tukaani:xz:1.9'
+
+    // EventBus（模块内部事件通信）— 宿主已有
+    implementation 'org.greenrobot:eventbus:3.3.1'
+
+    // Jetbrains annotations
+    implementation 'org.jetbrains:annotations:24.0.1'
+
+    // ===== 以下库已移除远程依赖，改用模块内源码实现 =====
+    // BRVAH (BaseRecyclerViewAdapterHelper)  → DriveAdapter 改为标准 RecyclerView.Adapter
+    // TvRecyclerView                         → DriveTvRecyclerView 替代
+    // AndroidAutoSize (me.jessyan:autosize)   → DriveActivity 中移除 CustomAdapt，使用 dp/sp 直接值
+    // filechooser (com.obsez.android.lib)     → 使用 Android 原生 ACTION_OPEN_DOCUMENT_TREE
+}

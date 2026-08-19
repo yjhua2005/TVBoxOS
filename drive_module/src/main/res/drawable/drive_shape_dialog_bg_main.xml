@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/drive_vs_15" />
+    <solid android:color="@color/drive_dialog_panel_bg" />
+    <stroke
+        android:width="@dimen/drive_vs_1"
+        android:color="@color/drive_dialog_panel_stroke" />
+</shape>

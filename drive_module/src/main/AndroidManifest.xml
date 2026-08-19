@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 存储权限（与主模块一致，不按 Android 版本分层） -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- ===================== 硬件与网络权限 ===================== -->
+
+    <!-- OTG USB 主机模式（U 盘挂载检测） -->
+    <uses-feature android:name="android.hardware.usb.host" android:required="false"/>
+
+    <!-- 网络基础（FTP 客户端/服务器、WebDAV、SMB、Alist 均依赖） -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- WiFi 局域网服务发现（FTP 服务器 / SMB 邻居发现需要） -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- APK 安装（文件管理器浏览 APK 后安装） -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- ===================== 应用组件 ===================== -->
+
+    <application
+        android:requestLegacyExternalStorage="true">
+        <activity
+            android:name=".ui.activity.DriveActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="landscape"
+            android:theme="@style/DriveTheme"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.github.tvbox.osc.drive.ACTION_OPEN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -5,3 +5,4 @@ include ':quickjs'
 include ':pyramid'
 
 include ':tvtoolbar'
+include ':drive_module'

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
+        android:layout_width="@dimen/drive_vs_600"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/drive_vs_50"
+        android:background="@drawable/drive_shape_dialog_bg_main"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/drive_vs_30"
+        android:paddingTop="@dimen/drive_vs_20"
+        android:paddingRight="@dimen/drive_vs_30"
+        android:paddingBottom="@dimen/drive_vs_30">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/drive_vs_10"
+            android:singleLine="true"
+            android:text="@string/drive_picker_title"
+            android:textColor="@color/drive_dialog_text_primary"
+            android:textSize="@dimen/drive_ts_26"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvCurrentPath"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="start"
+            android:paddingBottom="@dimen/drive_vs_15"
+            android:singleLine="true"
+            android:textColor="@color/drive_color_FFFFFF_70"
+            android:textSize="@dimen/drive_ts_20"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
+
+        <com.github.tvbox.osc.drive.widget.DriveTvRecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@+id/btnContainer"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCurrentPath"
+            app:layout_constraintVertical_bias="0.0"
+            app:tv_horizontalSpacingWithMargins="@dimen/drive_vs_10"
+            app:tv_layoutManager="V7LinearLayoutManager"
+            app:tv_selectedItemIsCentered="true"
+            app:tv_verticalSpacingWithMargins="@dimen/drive_vs_10" />
+
+        <LinearLayout
+            android:id="@+id/btnContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/drive_vs_20"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/list">
+
+            <TextView
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drive_button_dialog_main"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingLeft="@dimen/drive_vs_40"
+                android:paddingTop="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_40"
+                android:paddingBottom="@dimen/drive_vs_10"
+                android:text="@string/drive_btn_cancel"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_24" />		
+		
+		
+
+            <TextView
+                android:id="@+id/btnConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/drive_vs_30"
+                android:layout_marginStart="@dimen/drive_vs_30"
+                android:background="@drawable/drive_button_dialog_main"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingLeft="@dimen/drive_vs_40"
+                android:paddingTop="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_40"
+                android:paddingBottom="@dimen/drive_vs_10"
+                android:text="@string/drive_picker_confirm_dir"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_24" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

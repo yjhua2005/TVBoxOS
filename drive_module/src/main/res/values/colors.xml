@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===== 基础功能色 ===== -->
+    <color name="drive_color_FFFFFF">#FFFFFFFF</color>
+    <color name="drive_color_FFFFFF_70">#B3FFFFFF</color>
+    <color name="drive_color_000000_80">#80000000</color>
+    <color name="drive_color_000000_60">#99000000</color>
+    <color name="drive_color_000000_40">#66000000</color>
+
+    <!-- ===== 宿主统一 Dialog 调色板（与主 app colors.xml 保持一致） ===== -->
+    <!-- 对话框面板背景 -->
+    <color name="drive_dialog_panel_bg">#D91D202A</color>
+    <!-- 对话框面板边框 -->
+    <color name="drive_dialog_panel_stroke">#33FFFFFF</color>
+    <!-- 控件背景（未聚焦） -->
+    <color name="drive_dialog_control_bg">#80353744</color>
+    <!-- 控件背景（聚焦） -->
+    <color name="drive_dialog_control_bg_focused">#CC1890FF</color>
+    <!-- 控件边框（未聚焦） -->
+    <color name="drive_dialog_control_stroke">#22FFFFFF</color>
+    <!-- 控件边框（聚焦） -->
+    <color name="drive_dialog_control_stroke_focused">#CC02F8E1</color>
+    <!-- 输入框背景 -->
+    <color name="drive_dialog_input_bg">#66353744</color>
+    <!-- 主文本 -->
+    <color name="drive_dialog_text_primary">#FFFFFFFF</color>
+    <!-- 提示文本 -->
+    <color name="drive_dialog_text_hint">#80FFFFFF</color>
+
+    <!-- ===== 与宿主匹配的界面色 ===== -->
+    <!-- 深色表面（宿主 color_353744） -->
+    <color name="drive_color_353744">#353744</color>
+    <!-- 按钮未聚焦背景（宿主 color_6C3D3D3D） -->
+    <color name="drive_color_6C3D3D3D">#6c3d3d3d</color>
+    <!-- 列表项背景（宿主 color_6632364E） -->
+    <color name="drive_color_6632364E">#6632364E</color>
+    <!-- 列表项默认背景 -->
+    <color name="drive_color_3D3D3D_50">#803D3D3D</color>
+    <!-- 主文本色（宿主 color_text_primary 暖白） -->
+    <color name="drive_color_text_primary">#FFFFFAE0</color>
+
+    <!-- ===== 状态指示色（语义色，保持不变） ===== -->
+    <color name="drive_color_status_running">#4CAF50</color>
+    <color name="drive_color_status_stopped">#F44336</color>
+
+    <!-- ===== 协议图标特征色（保持不变） ===== -->
+    <color name="drive_color_ftp">#4FC3F7</color>
+    <color name="drive_color_ftp_server">#FF7043</color>
+    <color name="drive_color_smb">#7E57C2</color>
+    <color name="drive_color_webdav">#64b3e8</color>
+    <color name="drive_color_alist">#70c6be</color>
+    <color name="drive_color_alist_blue">#1ba0d8</color>
+</resources>

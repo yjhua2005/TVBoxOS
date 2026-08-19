@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+configurations.all {
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+    exclude group: 'xpp3', module: 'xpp3'
+    resolutionStrategy {
+        force 'com.squareup.okhttp3:okhttp:3.12.11'
+    }
+}
 android {
     compileSdkVersion 33
 
@@ -31,7 +38,7 @@ android {
                 //noinspection ChromeOsAbiSupport
                 abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-rules-drive.pro'
         }
         java32 {
             dimension "mode"
@@ -40,7 +47,7 @@ android {
                 //noinspection ChromeOsAbiSupport
                 abiFilters 'armeabi-v7a'
             }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-rules-drive.pro'
         }
         java64 {
             dimension "mode"
@@ -48,7 +55,7 @@ android {
             ndk {
                 abiFilters 'arm64-v8a'
             }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-rules-drive.pro'
         }
         python {
             dimension "mode"
@@ -57,7 +64,7 @@ android {
                 //noinspection ChromeOsAbiSupport
                 abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro', 'proguard-rules-drive.pro'
         }
         python32 {
             dimension "mode"
@@ -66,7 +73,7 @@ android {
                 //noinspection ChromeOsAbiSupport
                 abiFilters 'armeabi-v7a'
             }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro', 'proguard-rules-drive.pro'
         }
         python64 {
             dimension "mode"
@@ -74,7 +81,7 @@ android {
             ndk {
                 abiFilters 'arm64-v8a'
             }
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro', 'proguard-rules-drive.pro'
         }
     }
 
@@ -159,6 +166,7 @@ dependencies {
 //    implementation files('libs/thunder.jar')
 //    implementation files('libs/commons-lang3-3.12.0.jar')
 
+implementation 'org.apache.commons:commons-lang3:3.14.0'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.11'
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
@@ -202,5 +210,7 @@ dependencies {
     implementation 'org.brotli:dec:0.1.2'
 
     implementation project(':tvtoolbar')
+    // ===== Drive 子模块（网盘浏览） =====
+    implementation project(':drive_module')
 }
 

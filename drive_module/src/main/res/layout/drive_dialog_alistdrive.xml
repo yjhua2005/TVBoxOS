@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/drive_vs_600"
+    android:layout_height="wrap_content"
+    android:background="@drawable/drive_shape_dialog_bg_main"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/drive_vs_20"
+    android:paddingTop="@dimen/drive_vs_10"
+    android:paddingRight="@dimen/drive_vs_20"
+    android:paddingBottom="@dimen/drive_vs_10">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_name"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="@string/drive_label_name"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_alist_addr"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etUrl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="http(s)://"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_init_path"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etInitPath"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint="/"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/drive_vs_10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/drive_vs_20"
+                android:layout_marginRight="@dimen/drive_vs_20"
+                android:gravity="center_vertical|end"
+                android:text="@string/drive_label_password"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textSize="@dimen/drive_ts_20" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/drive_vs_50"
+                android:layout_weight="1"
+                android:background="@drawable/drive_shape_live_channel_num"
+                android:hint=""
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/drive_vs_10"
+                android:paddingRight="@dimen/drive_vs_10"
+                android:textColor="@color/drive_dialog_text_primary"
+                android:textColorHint="@color/drive_dialog_text_hint"
+                android:textSize="@dimen/drive_ts_20" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/drive_vs_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnConfirm"
+            android:layout_width="@dimen/drive_vs_120"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/drive_vs_100"
+            android:layout_marginRight="@dimen/drive_vs_100"
+            android:background="@drawable/drive_button_dialog_main"
+            android:focusable="true"
+            android:gravity="center"
+            android:padding="@dimen/drive_vs_10"
+            android:text="@string/drive_btn_confirm"
+            android:textColor="@color/drive_dialog_text_primary"
+            android:textSize="@dimen/drive_vs_20" />
+
+        <TextView
+            android:id="@+id/btnCancel"
+            android:layout_width="@dimen/drive_vs_120"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/drive_button_dialog_main"
+            android:focusable="true"
+            android:gravity="center"
+            android:padding="@dimen/drive_vs_10"
+            android:text="@string/drive_btn_cancel"
+            android:textColor="@color/drive_dialog_text_primary"
+            android:textSize="@dimen/drive_vs_20" />
+
+    </LinearLayout>
+
+</LinearLayout>

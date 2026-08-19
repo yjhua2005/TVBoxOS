@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 尺寸值 (dp 单位，适配 1080p TV) -->
+    <dimen name="drive_vs_0">0dp</dimen>
+    <dimen name="drive_vs_1">1dp</dimen>
+    <dimen name="drive_vs_2">2dp</dimen>
+    <dimen name="drive_vs_5">3dp</dimen>
+    <dimen name="drive_vs_6">3dp</dimen>
+    <dimen name="drive_vs_8">4dp</dimen>
+    <dimen name="drive_vs_10">5dp</dimen>
+    <dimen name="drive_vs_12">6dp</dimen>
+    <dimen name="drive_vs_15">8dp</dimen>
+    <dimen name="drive_vs_20">10dp</dimen>
+    <dimen name="drive_vs_30">15dp</dimen>
+    <dimen name="drive_vs_40">20dp</dimen>
+    <dimen name="drive_vs_50">25dp</dimen>
+    <dimen name="drive_vs_60">30dp</dimen>
+    <dimen name="drive_vs_80">40dp</dimen>
+    <dimen name="drive_vs_100">50dp</dimen>
+    <dimen name="drive_vs_120">60dp</dimen>
+    <dimen name="drive_vs_340">280dp</dimen>
+    <dimen name="drive_vs_480">400dp</dimen>
+    <dimen name="drive_vs_600">500dp</dimen>
+    <dimen name="drive_vs_960">800dp</dimen>
+
+    <!-- 文字大小 (sp) -->
+    <dimen name="drive_ts_10">10sp</dimen>
+    <dimen name="drive_ts_16">14sp</dimen>
+    <dimen name="drive_ts_20">16sp</dimen>
+    <dimen name="drive_ts_22">18sp</dimen>
+    <dimen name="drive_ts_24">18sp</dimen>
+    <dimen name="drive_ts_26">20sp</dimen>
+    <dimen name="drive_ts_34">24sp</dimen>
+</resources>

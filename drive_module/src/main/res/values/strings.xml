@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ==================== 通用按钮 ==================== -->
+    <string name="drive_btn_confirm">确定</string>
+    <string name="drive_btn_cancel">取消</string>
+    <string name="drive_btn_scan">扫描</string>
+    <string name="drive_btn_scanning">扫描中</string>
+    <string name="drive_btn_add">添加</string>
+    <string name="drive_btn_not_now">暂不</string>
+    <string name="drive_btn_browse">浏览</string>
+    <string name="drive_btn_start">启动</string>
+    <string name="drive_btn_stop">停止</string>
+    <string name="drive_btn_running">运行中</string>
+    <string name="drive_btn_stopped">已停止</string>
+
+    <!-- ==================== DriveActivity ==================== -->
+    <string name="drive_act_drive">存储空间</string>
+    <string name="drive_perm_denied">存储权限被拒绝，无法添加本地目录</string>
+    <string name="drive_perm_not_granted">未获得存储权限，无法添加本地目录</string>
+    <string name="drive_choose_type">请选择存盘类型</string>
+    <string name="drive_deleted">已删除</string>
+    <string name="drive_delete_fail_data">删除失败：数据异常</string>
+    <string name="drive_delete_fail_not_found">删除失败，未找到记录(id=%1$d)</string>
+    <string name="drive_no_remote_extract">暂不支持解压远程压缩包</string>
+    <string name="drive_no_play_callback">未设置播放回调，无法播放</string>
+    <string name="drive_sort_name_asc">按名字升序</string>
+    <string name="drive_sort_name_desc">按名字降序</string>
+    <string name="drive_sort_time_asc">按修改时间升序</string>
+    <string name="drive_sort_time_desc">按修改时间降序</string>
+    <string name="drive_choose_sort">请选择列表排序方式</string>
+    <string name="drive_path_empty">路径不能为空</string>
+    <string name="drive_dir_not_exist">目录不存在: %1$s</string>
+    <string name="drive_dir_already_added">此文件夹之前已被添加到空间列表！</string>
+    <string name="drive_usb_removed">U 盘已拔出</string>
+    <string name="drive_usb_detected">检测到 U 盘</string>
+    <string name="drive_usb_add_prompt">检测到外置存储设备 (%1$s)，是否添加到存储列表？</string>
+    <string name="drive_usb_added">已添加: %1$s</string>
+    <string name="drive_cannot_access_archive">无法访问该压缩包文件</string>
+    <string name="drive_cannot_find_archive_dir">无法确定压缩包所在目录</string>
+    <string name="drive_extracting">正在解压...</string>
+    <string name="drive_extracted">已解压: %1$s</string>
+    <string name="drive_extract_fail">解压失败: %1$s</string>
+    <string name="drive_start_extract">开始解压...</string>
+    <string name="drive_extract_done">解压完成: %1$s</string>
+    <string name="drive_search_result">搜索结果</string>
+    <string name="drive_perm_dialog_title">存储权限未开启</string>
+    <string name="drive_perm_dialog_msg">使用本地目录浏览需要存储权限，是否现在去授权？</string>
+    <string name="drive_perm_dialog_go">去授权</string>
+    <string name="drive_perm_dialog_later">稍后</string>
+    <string name="drive_play_name">存储</string>
+
+    <!-- ==================== FolderPickerDialog ==================== -->
+    <string name="drive_picker_title">选择本地目录</string>
+    <string name="drive_picker_already_root">已经是根目录</string>
+    <string name="drive_picker_no_dirs">未检测到可浏览的目录，请确认已授予存储权限</string>
+    <string name="drive_picker_cannot_access">无法访问: %1$s</string>
+    <string name="drive_picker_usb_fail">无法读取 U 盘内容，请确认 U 盘已正确插入且已授予存储权限</string>
+    <string name="drive_picker_read_fail">无法读取目录: %1$s</string>
+    <string name="drive_picker_confirm_dir">确定选择此目录</string>
+    <string name="drive_picker_go_up">返回上级</string>
+    <string name="drive_picker_external">外置存储</string>
+
+    <!-- ==================== SmbDriveDialog ==================== -->
+    <string name="drive_smb_please_name">请赋予一个空间名称</string>
+    <string name="drive_smb_please_addr">请填入SMB服务器地址</string>
+    <string name="drive_smb_please_share">请填入共享名称</string>
+    <string name="drive_smb_port_invalid">端口格式不正确</string>
+    <string name="drive_smb_scan_hint">正在自动扫描局域网 SMB 设备，请稍候...</string>
+    <string name="drive_smb_not_found">未发现 SMB 设备</string>
+    <string name="drive_smb_found">发现 %1$d 个 SMB 设备</string>
+    <string name="drive_smb_choose_version">选择SMB版本</string>
+    <string name="drive_smb_version_auto">自动</string>
+    <string name="drive_smb_version_1">SMB 1.0</string>
+    <string name="drive_smb_version_2">SMB 2.0</string>
+    <string name="drive_smb_version_3">SMB 3.0</string>
+
+    <!-- ==================== FtpDriveDialog ==================== -->
+    <string name="drive_ftp_please_name">请赋予一个空间名称</string>
+    <string name="drive_ftp_please_addr">请填入FTP服务器地址</string>
+    <string name="drive_ftp_port_invalid">端口格式不正确</string>
+
+    <!-- ==================== FtpServerConfigDialog ==================== -->
+    <string name="drive_ftp_server_title">FTP 服务器</string>
+    <string name="drive_ftp_server_stopped_hint">FTP 服务器已停止</string>
+    <string name="drive_ftp_server_please_port">请填写端口</string>
+    <string name="drive_ftp_server_port_invalid">端口格式不正确</string>
+    <string name="drive_ftp_server_port_range">端口范围 1-65535</string>
+    <string name="drive_ftp_server_please_root">请选择根目录</string>
+    <string name="drive_ftp_server_root_not_exist">根目录不存在: %1$s</string>
+    <string name="drive_ftp_server_started">FTP 服务器已启动</string>
+    <string name="drive_ftp_server_start_fail">启动失败，端口可能被占用</string>
+
+    <!-- ==================== WebdavDialog ==================== -->
+    <string name="drive_webdav_please_name">请赋予一个空间名称</string>
+    <string name="drive_webdav_please_url">请务必填入WebDav地址</string>
+
+    <!-- ==================== AlistDriveDialog ==================== -->
+    <string name="drive_alist_please_name">请赋予一个空间名称</string>
+    <string name="drive_alist_please_url">请务必填入Alist网页地址</string>
+
+    <!-- ==================== ArchiveExtractDialog ==================== -->
+    <string name="drive_extract_to_same_dir">解压到同名目录</string>
+    <string name="drive_extract_to_current_dir">解压到当前目录</string>
+    <string name="drive_extract_choose_dir">选择目录解压</string>
+    <string name="drive_extract_preparing">准备中...</string>
+    <string name="drive_extract_progress">正在解压: %1$s</string>
+    <string name="drive_extract_complete">解压完成: %1$s</string>
+    <string name="drive_extract_error">解压失败: %1$s</string>
+
+    <!-- ==================== ViewModel 错误提示 ==================== -->
+    <string name="drive_err_smb_connect">无法连接SMB服务器</string>
+    <string name="drive_err_smb_access">SMB访问失败: %1$s</string>
+    <string name="drive_err_local_read">读取目录出错: %1$s</string>
+    <string name="drive_err_local_not_exist">目录不存在: %1$s</string>
+    <string name="drive_err_local_perm">无法读取目录内容，请确认存储权限已授予</string>
+    <string name="drive_err_ftp_connect">无法连接FTP服务器</string>
+    <string name="drive_err_ftp_list">无法列出FTP目录: %1$s</string>
+    <string name="drive_err_ftp_access">FTP访问失败: %1$s</string>
+    <string name="drive_err_webdav_access">无法访问该WebDAV地址</string>
+    <string name="drive_err_alist_access">无法访问，请注意地址格式</string>
+    <string name="drive_err_archive_read">无法读取压缩包: %1$s</string>
+    <string name="drive_err_archive_unsupported">不支持的压缩格式: %1$s</string>
+    <string name="drive_err_archive_not_found">压缩包内未找到: %1$s</string>
+
+    <!-- ==================== 对话框标签 ==================== -->
+    <string name="drive_label_name">空间名称</string>
+    <string name="drive_label_addr">服务器地址</string>
+    <string name="drive_label_port">端口</string>
+    <string name="drive_label_init_path">初始路径</string>
+    <string name="drive_label_username">用户名</string>
+    <string name="drive_label_password">密码</string>
+    <string name="drive_label_encoding">编码</string>
+    <string name="drive_label_share_name">共享名称</string>
+    <string name="drive_label_domain">域名</string>
+    <string name="drive_label_smb_version">SMB版本</string>
+    <string name="drive_label_root_dir">根目录</string>
+    <string name="drive_label_ftp_server">FTP 服务器</string>
+    <string name="drive_label_webdav_addr">WebDAV地址</string>
+    <string name="drive_label_alist_addr">Alist地址</string>
+
+    <!-- ==================== 存储盘类型名称 ==================== -->
+    <string name="drive_type_local">本地目录</string>
+    <string name="drive_type_webdav">Webdav</string>
+    <string name="drive_type_alist">Alist网页</string>
+    <string name="drive_type_ftp">FTP客户端</string>
+    <string name="drive_type_ftp_server">FTP服务器</string>
+    <string name="drive_type_smb">SMB</string>
+</resources>

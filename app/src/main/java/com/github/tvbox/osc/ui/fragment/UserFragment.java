@@ -20,6 +20,9 @@ import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.RoomDataManger;
+import com.github.tvbox.osc.drive.DriveModule;
+import com.github.tvbox.osc.drive.callback.DriveCallback;
+import com.github.tvbox.osc.drive.ui.activity.DriveActivity;
 import com.github.tvbox.osc.event.ServerEvent;
 import com.github.tvbox.osc.ui.activity.CollectActivity;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
@@ -29,6 +32,7 @@ import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
+import com.github.tvbox.osc.drive.ui.activity.DriveActivity;
 import com.github.tvbox.osc.ui.dialog.LineSwitchDialog;
 import com.github.tvbox.osc.ui.dialog.MoreSourceDialog;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
@@ -211,6 +215,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvStore.setOnFocusChangeListener(focusChangeListener);
         tvChangeLine.setOnFocusChangeListener(focusChangeListener);
         tvDrive.setOnFocusChangeListener(focusChangeListener);
+        // 提前注入 Drive 回调，复用 push_agent 播放链路（左上角小窗预览）
+        setupDriveModule();
         tvHotList = findViewById(R.id.tvHotList);
         if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 1 && homeSourceRec!=null) {
             style=ImgUtil.initStyle();
@@ -401,6 +407,37 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }
     };
 
+    /**
+     * 初始化 Drive 子模块并注入宿主播放回调。
+     * 复用 push_agent 源播放任意 URL，走正常 DetailActivity 预览播放流程（左上角小窗）。
+     */
+    private void setupDriveModule() {
+        if (mContext == null) return;
+        DriveModule.init(mContext.getApplicationContext());
+        DriveModule.setDriveCallback(new DriveCallback() {
+            @Override
+            public void onPlayFile(String name, String url, String headers, String playFlag) {
+                if (ApiConfig.get() != null && ApiConfig.get().getSource("push_agent") != null) {
+                    Intent newIntent = new Intent(mContext, DetailActivity.class);
+                    newIntent.putExtra("id", url);
+                    newIntent.putExtra("sourceKey", "push_agent");
+                    if (name != null && !name.isEmpty()) {
+                        newIntent.putExtra("title", name);
+                    }
+                    newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mContext.startActivity(newIntent);
+                } else {
+                    Toast.makeText(mContext, "push_agent source 未就绪", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public int getThemeColor() {
+                return 0xFFD81F26;
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         
@@ -433,8 +470,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             });
             lineSwitchDialog.show();
         } else if (v.getId() == R.id.tvDrive) {
-            // 网盘功能占位
-            Toast.makeText(mContext, "网盘功能开发中", Toast.LENGTH_SHORT).show();
+            // 进入 Drive 子模块浏览网盘/本地文件，选中后通过 onPlayFile 回调交给宿主播放
+            startActivity(new Intent(mContext, DriveActivity.class));
         }
     }
 

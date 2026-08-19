@@ -863,6 +863,20 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
 
+	   //=====================================================
+                    // 存储模块推送播放：用文件名替换集名("播放")
+                    if ("push_agent".equals(firstsourceKey) && !TextUtils.isEmpty(vod_name)) {
+                        for (java.util.List<VodInfo.VodSeries> seriesList : vodInfo.seriesMap.values()) {
+                            if (seriesList != null) {
+                                for (VodInfo.VodSeries vs : seriesList) {
+                                    if ("播放".equals(vs.name)) {
+                                        vs.name = vod_name;
+                                    }
+                                }
+                            }
+                        }
+                    }
+	   //======================================================
                     tvName.setText(mVideo.name);
                     SourceBean displaySource = ApiConfig.get().getSource(firstsourceKey);
                     if (displaySource == null) {
