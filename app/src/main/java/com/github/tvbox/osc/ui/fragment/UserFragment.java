@@ -29,6 +29,8 @@ import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
+import com.github.tvbox.osc.ui.dialog.LineSwitchDialog;
+import com.github.tvbox.osc.ui.dialog.MoreSourceDialog;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -68,6 +70,9 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private LinearLayout tvHistory;
     private LinearLayout tvCollect;
     private LinearLayout tvPush;
+    private LinearLayout tvStore;
+    private LinearLayout tvChangeLine;
+    private LinearLayout tvDrive;
     public static HomeHotVodAdapter homeHotVodAdapter;
     private List<Movie.Video> homeSourceRec;
     public static TvRecyclerView tvHotList;
@@ -163,18 +168,27 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvCollect = findViewById(R.id.tvFavorite);
         tvHistory = findViewById(R.id.tvHistory);
         tvPush = findViewById(R.id.tvPush);
+        tvStore = findViewById(R.id.tvStore);
+        tvChangeLine = findViewById(R.id.tvChangeLine);
+        tvDrive = findViewById(R.id.tvDrive);
         tvLive.setOnClickListener(this);
         tvSearch.setOnClickListener(this);
         tvSetting.setOnClickListener(this);
         tvHistory.setOnClickListener(this);
         tvPush.setOnClickListener(this);
         tvCollect.setOnClickListener(this);
+        tvStore.setOnClickListener(this);
+        tvChangeLine.setOnClickListener(this);
+        tvDrive.setOnClickListener(this);
         tvLive.setOnFocusChangeListener(focusChangeListener);
         tvSearch.setOnFocusChangeListener(focusChangeListener);
         tvSetting.setOnFocusChangeListener(focusChangeListener);
         tvHistory.setOnFocusChangeListener(focusChangeListener);
         tvPush.setOnFocusChangeListener(focusChangeListener);
         tvCollect.setOnFocusChangeListener(focusChangeListener);
+        tvStore.setOnFocusChangeListener(focusChangeListener);
+        tvChangeLine.setOnFocusChangeListener(focusChangeListener);
+        tvDrive.setOnFocusChangeListener(focusChangeListener);
         tvHotList = findViewById(R.id.tvHotList);
         if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 1 && homeSourceRec!=null) {
             style=ImgUtil.initStyle();
@@ -367,8 +381,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-    	
-    	// takagen99: Remove Delete Mode
+        
+        // takagen99: Remove Delete Mode
         HawkConfig.hotVodDelete = false;
     
         FastClickCheckUtil.check(v);
@@ -384,6 +398,21 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             jumpActivity(PushActivity.class);
         } else if (v.getId() == R.id.tvFavorite) {
             jumpActivity(CollectActivity.class);
+        } else if (v.getId() == R.id.tvStore) {
+            MoreSourceDialog moreSourceDialog = new MoreSourceDialog(mActivity);
+            moreSourceDialog.show();
+        } else if (v.getId() == R.id.tvChangeLine) {
+            LineSwitchDialog lineSwitchDialog = new LineSwitchDialog(mActivity);
+            lineSwitchDialog.setOnLineSwitchedListener(new LineSwitchDialog.OnLineSwitchedListener() {
+                @Override
+                public void onLineSwitched(String newApiUrl) {
+                    // 线路切换完成后的回调处理（如需要可扩展）
+                }
+            });
+            lineSwitchDialog.show();
+        } else if (v.getId() == R.id.tvDrive) {
+            // 网盘功能占位
+            Toast.makeText(mContext, "网盘功能开发中", Toast.LENGTH_SHORT).show();
         }
     }
 
