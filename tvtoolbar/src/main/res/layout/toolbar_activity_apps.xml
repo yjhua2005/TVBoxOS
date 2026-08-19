@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/toolbar_apps_header_padding_h"
+        android:paddingTop="@dimen/toolbar_apps_header_padding_v"
+        android:paddingRight="@dimen/toolbar_apps_header_padding_h"
+        android:paddingBottom="@dimen/toolbar_apps_header_padding_v">
+
+        <View
+            android:layout_width="@dimen/toolbar_apps_bar_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/toolbar_apps_bar_margin_v"
+            android:layout_marginEnd="@dimen/toolbar_apps_bar_margin_end"
+            android:layout_marginBottom="@dimen/toolbar_apps_bar_margin_v"
+            android:background="@color/toolbar_theme" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/toolbar_apps_title_height"
+            android:drawablePadding="@dimen/toolbar_apps_title_drawable_padding"
+            android:gravity="center"
+            android:text="@string/toolbar_app_title"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/toolbar_apps_title_text_size"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvDelTip"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/toolbar_apps_del_tip_height"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/toolbar_apps_del_tip_margin_right"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:text="@string/toolbar_app_sel"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/toolbar_apps_del_tip_text_size"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/tvDelete"
+            android:layout_width="@dimen/toolbar_apps_del_btn_size"
+            android:layout_height="@dimen/toolbar_apps_del_btn_size"
+            android:layout_marginStart="@dimen/toolbar_apps_del_btn_margin_h"
+            android:layout_marginEnd="@dimen/toolbar_apps_del_btn_margin_h"
+            android:background="@drawable/toolbar_btn_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            android:padding="@dimen/toolbar_apps_del_btn_padding"
+            android:src="@drawable/toolbar_ic_delete" />
+    </LinearLayout>
+
+    <com.github.tvbox.toolbar.widget.FocusRecyclerView
+        android:id="@+id/mGridViewApps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:paddingLeft="@dimen/toolbar_apps_grid_padding_h"
+        android:paddingTop="@dimen/toolbar_apps_grid_padding_v"
+        android:paddingRight="@dimen/toolbar_apps_grid_padding_h"
+        android:paddingBottom="@dimen/toolbar_apps_grid_padding_v" />
+</LinearLayout>

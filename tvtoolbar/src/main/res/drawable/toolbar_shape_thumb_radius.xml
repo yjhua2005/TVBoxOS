@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape>
+            <corners android:radius="@dimen/toolbar_item_corner_radius" />
+            <stroke android:width="@dimen/toolbar_btn_stroke_width" android:color="@color/toolbar_white" />
+            <solid android:color="@color/toolbar_theme_40" />
+        </shape>
+    </item>
+    <item android:state_focused="false">
+        <shape>
+            <corners android:radius="@dimen/toolbar_item_corner_radius" />
+            <solid android:color="@color/toolbar_white_20" />
+        </shape>
+    </item>
+</selector>

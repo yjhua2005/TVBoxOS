@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:bottomLeftRadius="@dimen/toolbar_item_name_corner_radius"
+        android:bottomRightRadius="@dimen/toolbar_item_name_corner_radius" />
+    <solid android:color="@color/toolbar_black_60" />
+</shape>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 工具栏按钮圆角背景选择器 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/toolbar_btn_corner_radius" />
+            <solid android:color="@color/toolbar_theme_40" />
+        </shape>
+    </item>
+    <item android:state_focused="false" android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/toolbar_btn_corner_radius" />
+            <solid android:color="@color/toolbar_theme_40" />
+        </shape>
+    </item>
+    <item android:state_focused="true">
+        <shape>
+            <corners android:radius="@dimen/toolbar_btn_corner_radius" />
+            <solid android:color="@color/toolbar_theme_40" />
+            <stroke android:width="@dimen/toolbar_btn_stroke_width" android:color="@color/toolbar_white" />
+        </shape>
+    </item>
+    <item android:state_focused="false" android:state_pressed="false">
+        <shape>
+            <corners android:radius="@dimen/toolbar_btn_corner_radius" />
+            <solid android:color="@color/toolbar_transparent" />
+        </shape>
+    </item>
+</selector>

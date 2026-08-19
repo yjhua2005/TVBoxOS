@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 应用抽屉单项布局 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/toolbar_shape_thumb_radius"
+    android:focusable="true"
+    android:padding="@dimen/toolbar_item_outer_padding">
+
+    <FrameLayout
+        android:layout_width="@dimen/toolbar_item_size"
+        android:layout_height="@dimen/toolbar_item_size">
+
+        <ImageView
+            android:id="@+id/ivApps"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/toolbar_item_icon_margin_bottom"
+            android:padding="@dimen/toolbar_item_icon_padding"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="@dimen/toolbar_item_inner_padding">
+
+            <TextView
+                android:id="@+id/appName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/toolbar_shape_thumb_bottom_name"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingLeft="@dimen/toolbar_item_name_padding_h"
+                android:paddingTop="@dimen/toolbar_item_name_padding_v"
+                android:paddingRight="@dimen/toolbar_item_name_padding_h"
+                android:paddingBottom="@dimen/toolbar_item_name_padding_v"
+                android:singleLine="true"
+                android:text="App Name"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/toolbar_item_name_text_size" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/delFrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/toolbar_shape_user_delete"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="@dimen/toolbar_item_del_icon_size"
+                android:layout_height="@dimen/toolbar_item_del_icon_size"
+                android:layout_gravity="center"
+                android:src="@drawable/toolbar_ic_delete" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

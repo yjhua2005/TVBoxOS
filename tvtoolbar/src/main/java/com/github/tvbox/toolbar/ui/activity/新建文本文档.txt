@@ -1,0 +1,6 @@
+for (ApplicationInfo app : apps) {
+    if (pm.getLaunchIntentForPackage(app.packageName) != null
+            && (app.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {   // ← 删掉排除条件
+        items.add(AppInfo.get(context, app));
+    }
+}

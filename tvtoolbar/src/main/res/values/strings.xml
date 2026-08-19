@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toolbar_style_grid">Grid Layout</string>
+    <string name="toolbar_style_line">Line Layout</string>
+    <string name="toolbar_app_title">Applications</string>
+    <string name="toolbar_app_sel">Select to Uninstall</string>
+</resources>

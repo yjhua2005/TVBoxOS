@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题色（与宿主 color_1890FF 一致） -->
+    <color name="toolbar_theme">#1890FF</color>
+    <!-- 主题色 80% 透明度（与宿主 dialog_control_bg_focused 一致） -->
+    <color name="toolbar_theme_40">#CC1890FF</color>
+
+    <!-- 通用 -->
+    <color name="toolbar_white">#FFFFFF</color>
+    <!-- 非聚焦项背景（与宿主深色半透明背景风格一致） -->
+    <color name="toolbar_white_20">#6C353744</color>
+    <color name="toolbar_transparent">#00000000</color>
+    <color name="toolbar_black_60">#99000000</color>
+    <color name="toolbar_black_30">#48000000</color>
+</resources>

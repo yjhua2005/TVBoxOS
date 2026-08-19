@@ -66,6 +66,8 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
+import com.github.tvbox.toolbar.TvToolbarView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -87,6 +89,7 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout contentLayout;
     private TextView tvDate;
     private TextView tvName;
+    private TvToolbarView tvToolbar;
     private TvRecyclerView mGridView;
     private NoScrollViewPager mViewPager;
     private SourceViewModel sourceViewModel;
@@ -174,6 +177,28 @@ public class HomeActivity extends BaseActivity {
         this.topLayout = findViewById(R.id.topLayout);
         this.tvDate = findViewById(R.id.tvDate);
         this.tvName = findViewById(R.id.tvName);
+        this.tvToolbar = findViewById(R.id.tvToolbar);
+        if (this.tvToolbar != null) {
+            this.tvToolbar.setSelfPackageName(getPackageName());
+            this.tvToolbar.setDateVisible(false); // keep app date
+            // ========== 新增：布局切换按钮接入=================
+            // 1. 恢复用户上次选择的布局模式
+            this.tvToolbar.setStyleGrid(Hawk.get(HawkConfig.HOME_REC_STYLE, false));
+            // 2. 监听布局切换事件
+            this.tvToolbar.setOnStyleChangeListener(new TvToolbarView.OnStyleChangeListener() {
+                @Override
+                public void onStyleChanged(boolean isGridStyle) {
+                    // 持久化存储用户选择
+                    Hawk.put(HawkConfig.HOME_REC_STYLE, isGridStyle);
+                    // 切换 UserFragment 的推荐列表布局
+                    if (!fragments.isEmpty() && fragments.get(0) instanceof UserFragment) {
+                        ((UserFragment) fragments.get(0)).switchLayoutStyle(isGridStyle);
+                    }
+                }
+            });
+            //============新增结束=======================
+        }
+
         this.contentLayout = findViewById(R.id.contentLayout);
         this.mGridView = findViewById(R.id.mGridView);
         this.mViewPager = findViewById(R.id.mViewPager);
@@ -255,6 +280,11 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction == View.FOCUS_UP) {
+                    // 当工具栏可见时（第一个分类页 + 顶栏未隐藏），将焦点移到工具栏按钮
+                    if (sortFocused == 0 && tvToolbar != null && topHide == 0) {
+                        tvToolbar.focusFirstButton();
+                        return true;
+                    }
                     BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
                     if (baseLazyFragment instanceof UserFragment) {
                         refreshHomeSort();
@@ -691,8 +721,8 @@ public class HomeActivity extends BaseActivity {
         mHandler.removeCallbacks(refreshTopLayoutRunnable);
         mHandler.postDelayed(refreshTopLayoutRunnable, 450);
         mHandler.post(mRunnable);
+        if (tvToolbar != null) tvToolbar.onStart();
     }
-
 
     @Override
     protected void onPause() {
@@ -700,6 +730,7 @@ public class HomeActivity extends BaseActivity {
         mHandler.removeCallbacks(refreshTopInfoTextSizeRunnable);
         mHandler.removeCallbacks(refreshTopLayoutRunnable);
         mHandler.removeCallbacks(mRunnable);
+        if (tvToolbar != null) tvToolbar.onStop();
     }
 
     private void refreshTopInfoTextSize() {
@@ -822,6 +853,7 @@ public class HomeActivity extends BaseActivity {
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", 1.0f, 0.0f));
             animatorSet.setDuration(200);
             animatorSet.start();
+            if (tvToolbar != null) tvToolbar.setAllButtonsFocusable(false);
             return;
         }
         if (!hide && topHide == 1) {
@@ -834,6 +866,7 @@ public class HomeActivity extends BaseActivity {
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", 0.0f, 1.0f));
             animatorSet.setDuration(200);
             animatorSet.start();
+            if (tvToolbar != null) tvToolbar.setAllButtonsFocusable(true);
         }
     }
 
@@ -843,6 +876,7 @@ public class HomeActivity extends BaseActivity {
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
         unregisterEventBus();
+        if (tvToolbar != null) tvToolbar.onDestroy();
         if (isFinishing()) {
             ControlManager.get().stopServer();
         }

@@ -3,3 +3,5 @@ include ':app'
 include ':player'
 include ':quickjs'
 include ':pyramid'
+
+include ':tvtoolbar'

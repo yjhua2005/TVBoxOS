@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 工具栏内部按钮布局（被 TvToolbarView include） -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- tvWifi: 网络图标 -->
+    <ImageView
+        android:id="@+id/tbWifi"
+        android:layout_width="@dimen/toolbar_btn_size"
+        android:layout_height="@dimen/toolbar_btn_size"
+        android:layout_marginStart="@dimen/toolbar_btn_margin_h"
+        android:layout_marginEnd="@dimen/toolbar_btn_margin_h"
+        android:background="@drawable/toolbar_btn_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/toolbar_btn_padding"
+        android:src="@drawable/toolbar_ic_wifi_no" />
+
+    <!-- tbStyle: 布局切换（网格/横排） -->
+    <ImageView
+        android:id="@+id/tbStyle"
+        android:layout_width="@dimen/toolbar_btn_size"
+        android:layout_height="@dimen/toolbar_btn_size"
+        android:layout_marginStart="@dimen/toolbar_btn_margin_h"
+        android:layout_marginEnd="@dimen/toolbar_btn_margin_h"
+        android:background="@drawable/toolbar_btn_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/toolbar_btn_padding"
+        android:src="@drawable/toolbar_ic_left_right" />
+
+    <!-- tvDraw: 应用抽屉 -->
+    <ImageView
+        android:id="@+id/tbDrawer"
+        android:layout_width="@dimen/toolbar_btn_size"
+        android:layout_height="@dimen/toolbar_btn_size"
+        android:layout_marginStart="@dimen/toolbar_btn_margin_h"
+        android:layout_marginEnd="@dimen/toolbar_btn_margin_h"
+        android:background="@drawable/toolbar_btn_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/toolbar_btn_padding"
+        android:src="@drawable/toolbar_ic_drawer" />
+
+    <!-- tvMenu: 系统设置 -->
+    <ImageView
+        android:id="@+id/tbMenu"
+        android:layout_width="@dimen/toolbar_btn_size"
+        android:layout_height="@dimen/toolbar_btn_size"
+        android:layout_marginStart="@dimen/toolbar_btn_margin_h"
+        android:layout_marginEnd="@dimen/toolbar_btn_margin_h"
+        android:background="@drawable/toolbar_btn_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/toolbar_btn_padding"
+        android:src="@drawable/toolbar_ic_settings" />
+
+    <!-- tvDate: 日期时间 -->
+    <TextView
+        android:id="@+id/tbDate"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/toolbar_date_margin_start"
+        android:background="@drawable/toolbar_btn_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:textAlignment="gravity"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/toolbar_date_text_size"
+        android:textStyle="bold" />
+
+</merge>

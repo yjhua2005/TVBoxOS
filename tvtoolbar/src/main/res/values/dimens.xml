@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===== 工具栏按钮（toolbar_btn_bg + toolbar_topbar_content） ===== -->
+    <dimen name="toolbar_btn_size">40dp</dimen>
+    <dimen name="toolbar_btn_padding">5dp</dimen>
+    <dimen name="toolbar_btn_margin_h">6dp</dimen>
+    <dimen name="toolbar_btn_corner_radius">12dp</dimen>
+    <dimen name="toolbar_btn_stroke_width">1.5dp</dimen>
+
+    <!-- ===== 工具栏整体（TvToolbarView Java + toolbar_topbar_content） ===== -->
+    <dimen name="toolbar_padding_h">19dp</dimen>
+    <dimen name="toolbar_padding_v">4dp</dimen>
+    <dimen name="toolbar_date_margin_start">6dp</dimen>
+    <dimen name="toolbar_date_text_size">14sp</dimen>
+
+    <!-- ===== 应用列表页头部（toolbar_activity_apps） ===== -->
+    <dimen name="toolbar_apps_header_padding_h">19dp</dimen>
+    <dimen name="toolbar_apps_header_padding_v">8dp</dimen>
+    <dimen name="toolbar_apps_bar_width">2dp</dimen>
+    <dimen name="toolbar_apps_bar_margin_v">3dp</dimen>
+    <dimen name="toolbar_apps_bar_margin_end">5dp</dimen>
+    <dimen name="toolbar_apps_title_height">40dp</dimen>
+    <dimen name="toolbar_apps_title_drawable_padding">4dp</dimen>
+    <dimen name="toolbar_apps_title_text_size">17sp</dimen>
+    <dimen name="toolbar_apps_del_tip_height">40dp</dimen>
+    <dimen name="toolbar_apps_del_tip_margin_right">5dp</dimen>
+    <dimen name="toolbar_apps_del_tip_text_size">12sp</dimen>
+    <dimen name="toolbar_apps_del_btn_margin_h">5dp</dimen>
+    <dimen name="toolbar_apps_del_btn_size">40dp</dimen>
+    <dimen name="toolbar_apps_del_btn_padding">5dp</dimen>
+
+    <!-- ===== 应用列表页网格（toolbar_activity_apps） ===== -->
+    <dimen name="toolbar_apps_grid_padding_h">30dp</dimen>
+    <dimen name="toolbar_apps_grid_padding_v">15dp</dimen>
+    <dimen name="toolbar_apps_grid_spacing">16dp</dimen>
+
+    <!-- ===== 应用列表项（toolbar_item_apps + toolbar_shape_thumb_*） ===== -->
+    <dimen name="toolbar_item_outer_padding">1dp</dimen>
+    <dimen name="toolbar_item_size">105dp</dimen>
+    <dimen name="toolbar_item_icon_margin_bottom">14dp</dimen>
+    <dimen name="toolbar_item_icon_padding">8dp</dimen>
+    <dimen name="toolbar_item_inner_padding">1dp</dimen>
+    <dimen name="toolbar_item_name_padding_h">4dp</dimen>
+    <dimen name="toolbar_item_name_padding_v">3dp</dimen>
+    <dimen name="toolbar_item_name_text_size">11sp</dimen>
+    <dimen name="toolbar_item_name_corner_radius">6dp</dimen>
+    <dimen name="toolbar_item_corner_radius">18px</dimen>
+    <dimen name="toolbar_item_del_icon_size">30dp</dimen>
+    <dimen name="toolbar_item_del_corner_radius">4dp</dimen>
+</resources>

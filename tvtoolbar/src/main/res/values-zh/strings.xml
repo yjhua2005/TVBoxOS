@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="toolbar_style_grid">网格布局</string>
+    <string name="toolbar_style_line">横排布局</string>
+    <string name="toolbar_app_title">我的应用</string>
+    <string name="toolbar_app_sel">确定键删除当前选中应用</string>
+</resources>
